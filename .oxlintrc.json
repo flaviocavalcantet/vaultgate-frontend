@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc", "jsx-a11y", "import", "unicorn", "vitest"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error"
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "react/only-export-components": ["error", { "allowConstantExport": true }],
+    "react/no-danger": "error",
+    "react/react-in-jsx-scope": "off",
+    "typescript/no-explicit-any": "error",
+    "typescript/consistent-type-imports": "error",
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "eqeqeq": "error",
+    "import/no-unassigned-import": "off",
+    "import/no-named-as-default-member": "off"
+  },
+  "ignorePatterns": ["dist", "coverage"]
+}
