@@ -17,12 +17,20 @@
             "type": "string"
           },
           "recipient_kind": {
-            "enum": ["external", "internal"],
+            "enum": [
+              "external",
+              "internal"
+            ],
             "title": "Recipient Kind",
             "type": "string"
           }
         },
-        "required": ["recipient_kind", "recipient_hint", "expires_at", "downloads_left"],
+        "required": [
+          "recipient_kind",
+          "recipient_hint",
+          "expires_at",
+          "downloads_left"
+        ],
         "title": "AccessOut",
         "type": "object"
       },
@@ -106,7 +114,13 @@
             "type": "string"
           },
           "status": {
-            "enum": ["pending", "approved", "completed", "rejected", "expired"],
+            "enum": [
+              "pending",
+              "approved",
+              "completed",
+              "rejected",
+              "expired"
+            ],
             "title": "Status",
             "type": "string"
           }
@@ -272,7 +286,10 @@
             "type": "string"
           }
         },
-        "required": ["code", "code_expires_at"],
+        "required": [
+          "code",
+          "code_expires_at"
+        ],
         "title": "ApprovalOut",
         "type": "object"
       },
@@ -284,7 +301,9 @@
             "type": "string"
           }
         },
-        "required": ["key_fingerprint"],
+        "required": [
+          "key_fingerprint"
+        ],
         "title": "ApproveIn",
         "type": "object"
       },
@@ -427,7 +446,14 @@
             "type": "string"
           }
         },
-        "required": ["node_id", "identity", "certificate", "chain", "serial", "expires_at"],
+        "required": [
+          "node_id",
+          "identity",
+          "certificate",
+          "chain",
+          "serial",
+          "expires_at"
+        ],
         "title": "CertificateOut",
         "type": "object"
       },
@@ -439,7 +465,9 @@
             "type": "string"
           }
         },
-        "required": ["csr"],
+        "required": [
+          "csr"
+        ],
         "title": "ClientEnrollmentIn",
         "type": "object"
       },
@@ -466,7 +494,12 @@
             "type": "string"
           }
         },
-        "required": ["provider", "document", "signature", "csr"],
+        "required": [
+          "provider",
+          "document",
+          "signature",
+          "csr"
+        ],
         "title": "CloudEnrollmentIn",
         "type": "object"
       },
@@ -479,7 +512,9 @@
             "type": "string"
           }
         },
-        "required": ["code"],
+        "required": [
+          "code"
+        ],
         "title": "CompleteIn",
         "type": "object"
       },
@@ -498,7 +533,10 @@
             "type": "string"
           }
         },
-        "required": ["token", "grant"],
+        "required": [
+          "token",
+          "grant"
+        ],
         "title": "DownloadIn",
         "type": "object"
       },
@@ -516,7 +554,10 @@
             "type": "string"
           }
         },
-        "required": ["name", "csr"],
+        "required": [
+          "name",
+          "csr"
+        ],
         "title": "EnrollmentIn",
         "type": "object"
       },
@@ -545,12 +586,25 @@
             "type": "string"
           },
           "status": {
-            "enum": ["pending", "approved", "completed", "rejected", "expired"],
+            "enum": [
+              "pending",
+              "approved",
+              "completed",
+              "rejected",
+              "expired"
+            ],
             "title": "Status",
             "type": "string"
           }
         },
-        "required": ["id", "name", "identity", "key_fingerprint", "status", "expires_at"],
+        "required": [
+          "id",
+          "name",
+          "identity",
+          "key_fingerprint",
+          "status",
+          "expires_at"
+        ],
         "title": "EnrollmentOut",
         "type": "object"
       },
@@ -558,7 +612,13 @@
         "description": "A hypothetical request: whose groups (a user's, or a list), from where, when.",
         "properties": {
           "action": {
-            "enum": ["read", "upload", "download", "share", "enroll"],
+            "enum": [
+              "read",
+              "upload",
+              "download",
+              "share",
+              "enroll"
+            ],
             "title": "Action",
             "type": "string"
           },
@@ -610,7 +670,10 @@
             "title": "User Id"
           }
         },
-        "required": ["action", "client_ip"],
+        "required": [
+          "action",
+          "client_ip"
+        ],
         "title": "EvaluateIn",
         "type": "object"
       },
@@ -651,12 +714,24 @@
             "type": "array"
           },
           "reason": {
-            "enum": ["allowed", "denied", "no_matching_policy"],
+            "enum": [
+              "allowed",
+              "denied",
+              "no_matching_policy"
+            ],
             "title": "Reason",
             "type": "string"
           }
         },
-        "required": ["allowed", "reason", "deny", "allow", "groups", "client_ip", "at"],
+        "required": [
+          "allowed",
+          "reason",
+          "deny",
+          "allow",
+          "groups",
+          "client_ip",
+          "at"
+        ],
         "title": "EvaluateOut",
         "type": "object"
       },
@@ -680,7 +755,10 @@
             "type": "integer"
           }
         },
-        "required": ["name", "size"],
+        "required": [
+          "name",
+          "size"
+        ],
         "title": "FileCreate",
         "type": "object"
       },
@@ -693,7 +771,10 @@
             "$ref": "#/components/schemas/TransferOut"
           }
         },
-        "required": ["file", "upload"],
+        "required": [
+          "file",
+          "upload"
+        ],
         "title": "FileCreated",
         "type": "object"
       },
@@ -817,7 +898,12 @@
             "type": "integer"
           }
         },
-        "required": ["items", "total", "limit", "offset"],
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
         "title": "FilePage",
         "type": "object"
       },
@@ -832,7 +918,10 @@
             "type": "string"
           }
         },
-        "required": ["kind", "count"],
+        "required": [
+          "kind",
+          "count"
+        ],
         "title": "FindingOut",
         "type": "object"
       },
@@ -848,7 +937,10 @@
             "type": "string"
           }
         },
-        "required": ["grant", "expires_at"],
+        "required": [
+          "grant",
+          "expires_at"
+        ],
         "title": "GrantOut",
         "type": "object"
       },
@@ -873,7 +965,12 @@
             "type": "string"
           }
         },
-        "required": ["id", "name", "members", "created_at"],
+        "required": [
+          "id",
+          "name",
+          "members",
+          "created_at"
+        ],
         "title": "GroupOut",
         "type": "object"
       },
@@ -928,7 +1025,12 @@
             "title": "Revoked At"
           },
           "state": {
-            "enum": ["usable", "used", "revoked", "expired"],
+            "enum": [
+              "usable",
+              "used",
+              "revoked",
+              "expired"
+            ],
             "title": "State",
             "type": "string"
           },
@@ -1062,7 +1164,12 @@
             "type": "integer"
           }
         },
-        "required": ["items", "total", "limit", "offset"],
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
         "title": "Page[AdminEnrollmentOut]",
         "type": "object"
       },
@@ -1088,7 +1195,12 @@
             "type": "integer"
           }
         },
-        "required": ["items", "total", "limit", "offset"],
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
         "title": "Page[AdminFileOut]",
         "type": "object"
       },
@@ -1114,7 +1226,12 @@
             "type": "integer"
           }
         },
-        "required": ["items", "total", "limit", "offset"],
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
         "title": "Page[AuditEventOut]",
         "type": "object"
       },
@@ -1140,7 +1257,12 @@
             "type": "integer"
           }
         },
-        "required": ["items", "total", "limit", "offset"],
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
         "title": "Page[GroupOut]",
         "type": "object"
       },
@@ -1166,7 +1288,12 @@
             "type": "integer"
           }
         },
-        "required": ["items", "total", "limit", "offset"],
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
         "title": "Page[NodeOut]",
         "type": "object"
       },
@@ -1192,7 +1319,12 @@
             "type": "integer"
           }
         },
-        "required": ["items", "total", "limit", "offset"],
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
         "title": "Page[PolicyOut]",
         "type": "object"
       },
@@ -1218,7 +1350,12 @@
             "type": "integer"
           }
         },
-        "required": ["items", "total", "limit", "offset"],
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
         "title": "Page[TokenOut]",
         "type": "object"
       },
@@ -1244,7 +1381,12 @@
             "type": "integer"
           }
         },
-        "required": ["items", "total", "limit", "offset"],
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
         "title": "Page[TpmOut]",
         "type": "object"
       },
@@ -1270,7 +1412,12 @@
             "type": "integer"
           }
         },
-        "required": ["items", "total", "limit", "offset"],
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
         "title": "Page[UserOut]",
         "type": "object"
       },
@@ -1278,7 +1425,13 @@
         "properties": {
           "actions": {
             "items": {
-              "enum": ["read", "upload", "download", "share", "enroll"],
+              "enum": [
+                "read",
+                "upload",
+                "download",
+                "share",
+                "enroll"
+              ],
               "type": "string"
             },
             "minItems": 1,
@@ -1303,7 +1456,10 @@
             "type": "string"
           },
           "effect": {
-            "enum": ["allow", "deny"],
+            "enum": [
+              "allow",
+              "deny"
+            ],
             "title": "Effect",
             "type": "string"
           },
@@ -1381,7 +1537,11 @@
             "type": "string"
           }
         },
-        "required": ["name", "effect", "actions"],
+        "required": [
+          "name",
+          "effect",
+          "actions"
+        ],
         "title": "PolicyIn",
         "type": "object"
       },
@@ -1389,7 +1549,13 @@
         "properties": {
           "actions": {
             "items": {
-              "enum": ["read", "upload", "download", "share", "enroll"],
+              "enum": [
+                "read",
+                "upload",
+                "download",
+                "share",
+                "enroll"
+              ],
               "type": "string"
             },
             "minItems": 1,
@@ -1419,7 +1585,10 @@
             "type": "string"
           },
           "effect": {
-            "enum": ["allow", "deny"],
+            "enum": [
+              "allow",
+              "deny"
+            ],
             "title": "Effect",
             "type": "string"
           },
@@ -1507,14 +1676,24 @@
             "type": "string"
           }
         },
-        "required": ["name", "effect", "actions", "id", "created_at", "updated_at"],
+        "required": [
+          "name",
+          "effect",
+          "actions",
+          "id",
+          "created_at",
+          "updated_at"
+        ],
         "title": "PolicyOut",
         "type": "object"
       },
       "ReleaseOut": {
         "properties": {
           "purpose": {
-            "enum": ["download", "share"],
+            "enum": [
+              "download",
+              "share"
+            ],
             "title": "Purpose",
             "type": "string"
           },
@@ -1528,7 +1707,11 @@
             "type": "string"
           }
         },
-        "required": ["purpose", "released_at", "reason"],
+        "required": [
+          "purpose",
+          "released_at",
+          "reason"
+        ],
         "title": "ReleaseOut",
         "type": "object"
       },
@@ -1536,7 +1719,10 @@
         "properties": {
           "purpose": {
             "default": "download",
-            "enum": ["download", "share"],
+            "enum": [
+              "download",
+              "share"
+            ],
             "title": "Purpose",
             "type": "string"
           },
@@ -1547,7 +1733,9 @@
             "type": "string"
           }
         },
-        "required": ["reason"],
+        "required": [
+          "reason"
+        ],
         "title": "ReleaseRequest",
         "type": "object"
       },
@@ -1591,12 +1779,23 @@
             "title": "Scanned At"
           },
           "verdict": {
-            "enum": ["pending", "clean", "quarantined", "unscannable"],
+            "enum": [
+              "pending",
+              "clean",
+              "quarantined",
+              "unscannable"
+            ],
             "title": "Verdict",
             "type": "string"
           }
         },
-        "required": ["verdict", "findings", "reason", "scanned_at", "releases"],
+        "required": [
+          "verdict",
+          "findings",
+          "reason",
+          "scanned_at",
+          "releases"
+        ],
         "title": "ScanOut",
         "type": "object"
       },
@@ -1633,12 +1832,17 @@
           },
           "recipient_kind": {
             "default": "external",
-            "enum": ["external", "internal"],
+            "enum": [
+              "external",
+              "internal"
+            ],
             "title": "Recipient Kind",
             "type": "string"
           }
         },
-        "required": ["recipient_email"],
+        "required": [
+          "recipient_email"
+        ],
         "title": "ShareCreate",
         "type": "object"
       },
@@ -1656,7 +1860,11 @@
             "type": "string"
           }
         },
-        "required": ["share", "url", "token"],
+        "required": [
+          "share",
+          "url",
+          "token"
+        ],
         "title": "ShareCreated",
         "type": "object"
       },
@@ -1711,7 +1919,12 @@
             "title": "Revoked At"
           },
           "state": {
-            "enum": ["active", "expired", "used", "revoked"],
+            "enum": [
+              "active",
+              "expired",
+              "used",
+              "revoked"
+            ],
             "title": "State",
             "type": "string"
           }
@@ -1815,7 +2028,10 @@
             "type": "string"
           }
         },
-        "required": ["token", "csr"],
+        "required": [
+          "token",
+          "csr"
+        ],
         "title": "TokenEnrollmentIn",
         "type": "object"
       },
@@ -1857,7 +2073,12 @@
             "title": "Revoked At"
           },
           "state": {
-            "enum": ["usable", "used", "revoked", "expired"],
+            "enum": [
+              "usable",
+              "used",
+              "revoked",
+              "expired"
+            ],
             "title": "State",
             "type": "string"
           },
@@ -1912,7 +2133,13 @@
             "type": "string"
           }
         },
-        "required": ["id", "name", "identity", "credential", "expires_at"],
+        "required": [
+          "id",
+          "name",
+          "identity",
+          "credential",
+          "expires_at"
+        ],
         "title": "TpmChallengeOut",
         "type": "object"
       },
@@ -1924,7 +2151,9 @@
             "type": "string"
           }
         },
-        "required": ["secret"],
+        "required": [
+          "secret"
+        ],
         "title": "TpmCompleteIn",
         "type": "object"
       },
@@ -1961,7 +2190,14 @@
             "type": "string"
           }
         },
-        "required": ["ek", "ak", "key", "attest", "signature", "csr"],
+        "required": [
+          "ek",
+          "ak",
+          "key",
+          "attest",
+          "signature",
+          "csr"
+        ],
         "title": "TpmEnrollmentIn",
         "type": "object"
       },
@@ -1979,7 +2215,10 @@
             "type": "string"
           }
         },
-        "required": ["name", "ek_fingerprint"],
+        "required": [
+          "name",
+          "ek_fingerprint"
+        ],
         "title": "TpmIn",
         "type": "object"
       },
@@ -2025,7 +2264,12 @@
             "title": "Revoked At"
           },
           "state": {
-            "enum": ["usable", "used", "revoked", "expired"],
+            "enum": [
+              "usable",
+              "used",
+              "revoked",
+              "expired"
+            ],
             "title": "State",
             "type": "string"
           },
@@ -2072,7 +2316,11 @@
             "type": "string"
           }
         },
-        "required": ["url", "token", "expires_at"],
+        "required": [
+          "url",
+          "token",
+          "expires_at"
+        ],
         "title": "TransferOut",
         "type": "object"
       },
@@ -2108,6 +2356,10 @@
           },
           "is_active": {
             "title": "Is Active",
+            "type": "boolean"
+          },
+          "is_admin": {
+            "title": "Is Admin",
             "type": "boolean"
           },
           "issuer": {
@@ -2161,6 +2413,7 @@
           "email",
           "name",
           "groups",
+          "is_admin",
           "is_active",
           "created_at",
           "last_login_at"
@@ -2200,7 +2453,11 @@
             "type": "string"
           }
         },
-        "required": ["loc", "msg", "type"],
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
         "title": "ValidationError",
         "type": "object"
       },
@@ -2259,7 +2516,14 @@
             "title": "Reason"
           }
         },
-        "required": ["ok", "events", "head_id", "head_hash", "first_broken_id", "reason"],
+        "required": [
+          "ok",
+          "events",
+          "head_id",
+          "head_hash",
+          "first_broken_id",
+          "reason"
+        ],
         "title": "VerificationOut",
         "type": "object"
       },
@@ -2277,7 +2541,10 @@
             "type": "string"
           }
         },
-        "required": ["token", "code"],
+        "required": [
+          "token",
+          "code"
+        ],
         "title": "VerifyIn",
         "type": "object"
       },
@@ -2302,7 +2569,9 @@
             "title": "Ttl Seconds"
           }
         },
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "title": "TokenIn",
         "type": "object"
       },
@@ -2315,7 +2584,9 @@
             "type": "string"
           }
         },
-        "required": ["token"],
+        "required": [
+          "token"
+        ],
         "title": "TokenIn",
         "type": "object"
       }
@@ -2496,7 +2767,9 @@
           }
         ],
         "summary": "List Events",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/audit/verify": {
@@ -2521,7 +2794,9 @@
           }
         ],
         "summary": "Verify Chain",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/files": {
@@ -2536,7 +2811,12 @@
             "schema": {
               "anyOf": [
                 {
-                  "enum": ["pending", "clean", "quarantined", "unscannable"],
+                  "enum": [
+                    "pending",
+                    "clean",
+                    "quarantined",
+                    "unscannable"
+                  ],
                   "type": "string"
                 },
                 {
@@ -2598,7 +2878,9 @@
           }
         ],
         "summary": "List Scanned Files",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/files/{file_id}": {
@@ -2644,7 +2926,9 @@
           }
         ],
         "summary": "Get Scanned File",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/files/{file_id}/release": {
@@ -2701,7 +2985,9 @@
           }
         ],
         "summary": "Release File",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/files/{file_id}/rescan": {
@@ -2748,7 +3034,9 @@
           }
         ],
         "summary": "Rescan File",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/groups": {
@@ -2808,7 +3096,9 @@
           }
         ],
         "summary": "List Groups",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/nodes": {
@@ -2821,7 +3111,10 @@
             "required": false,
             "schema": {
               "default": "active",
-              "enum": ["active", "all"],
+              "enum": [
+                "active",
+                "all"
+              ],
               "title": "Status",
               "type": "string"
             }
@@ -2878,7 +3171,9 @@
           }
         ],
         "summary": "List Nodes",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/nodes/enrollments": {
@@ -2892,7 +3187,10 @@
             "required": false,
             "schema": {
               "default": "waiting",
-              "enum": ["waiting", "all"],
+              "enum": [
+                "waiting",
+                "all"
+              ],
               "title": "Status",
               "type": "string"
             }
@@ -2949,7 +3247,9 @@
           }
         ],
         "summary": "List Enrollments",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/nodes/enrollments/{enrollment_id}/approve": {
@@ -3006,7 +3306,9 @@
           }
         ],
         "summary": "Approve Enrollment",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/nodes/enrollments/{enrollment_id}/reject": {
@@ -3045,7 +3347,9 @@
           }
         ],
         "summary": "Reject Enrollment",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/nodes/tokens": {
@@ -3058,7 +3362,10 @@
             "required": false,
             "schema": {
               "default": "usable",
-              "enum": ["usable", "all"],
+              "enum": [
+                "usable",
+                "all"
+              ],
               "title": "Status",
               "type": "string"
             }
@@ -3115,7 +3422,9 @@
           }
         ],
         "summary": "List Tokens",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       },
       "post": {
         "description": "An enrollment token for the node `name`: give it to the node, which enrolls with it\nonce. The token is in this answer only.",
@@ -3158,7 +3467,9 @@
           }
         ],
         "summary": "Issue Token",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/nodes/tokens/{token_id}/revoke": {
@@ -3198,7 +3509,9 @@
           }
         ],
         "summary": "Revoke Token",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/nodes/tpms": {
@@ -3211,7 +3524,10 @@
             "required": false,
             "schema": {
               "default": "usable",
-              "enum": ["usable", "all"],
+              "enum": [
+                "usable",
+                "all"
+              ],
               "title": "Status",
               "type": "string"
             }
@@ -3268,7 +3584,9 @@
           }
         ],
         "summary": "List Tpms",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       },
       "post": {
         "description": "Register a TPM, by its EK's fingerprint, for the node `name`: that TPM may then\nenroll the node by attestation, once.",
@@ -3311,7 +3629,9 @@
           }
         ],
         "summary": "Register Tpm",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/nodes/tpms/{tpm_id}/revoke": {
@@ -3350,7 +3670,9 @@
           }
         ],
         "summary": "Revoke Tpm",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/nodes/{node_id}/revoke": {
@@ -3397,7 +3719,9 @@
           }
         ],
         "summary": "Revoke Node",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/policies": {
@@ -3457,7 +3781,9 @@
           }
         ],
         "summary": "List Policies",
-        "tags": ["policies"]
+        "tags": [
+          "policies"
+        ]
       },
       "post": {
         "operationId": "create_policy_admin_policies_post",
@@ -3499,7 +3825,9 @@
           }
         ],
         "summary": "Create Policy",
-        "tags": ["policies"]
+        "tags": [
+          "policies"
+        ]
       }
     },
     "/admin/policies/evaluate": {
@@ -3544,7 +3872,9 @@
           }
         ],
         "summary": "Evaluate Policies",
-        "tags": ["policies"]
+        "tags": [
+          "policies"
+        ]
       }
     },
     "/admin/policies/{policy_id}": {
@@ -3583,7 +3913,9 @@
           }
         ],
         "summary": "Delete Policy",
-        "tags": ["policies"]
+        "tags": [
+          "policies"
+        ]
       },
       "get": {
         "operationId": "get_policy_admin_policies__policy_id__get",
@@ -3627,7 +3959,9 @@
           }
         ],
         "summary": "Get Policy",
-        "tags": ["policies"]
+        "tags": [
+          "policies"
+        ]
       },
       "put": {
         "operationId": "replace_policy_admin_policies__policy_id__put",
@@ -3681,7 +4015,9 @@
           }
         ],
         "summary": "Replace Policy",
-        "tags": ["policies"]
+        "tags": [
+          "policies"
+        ]
       }
     },
     "/admin/users": {
@@ -3741,7 +4077,9 @@
           }
         ],
         "summary": "List Users",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/admin/users/{user_id}": {
@@ -3787,7 +4125,9 @@
           }
         ],
         "summary": "Get User",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/files": {
@@ -3847,7 +4187,9 @@
           }
         ],
         "summary": "List Files",
-        "tags": ["files"]
+        "tags": [
+          "files"
+        ]
       },
       "post": {
         "description": "Register a file and get a single-use upload intent for the gateway.",
@@ -3890,7 +4232,9 @@
           }
         ],
         "summary": "Create File",
-        "tags": ["files"]
+        "tags": [
+          "files"
+        ]
       }
     },
     "/files/{file_id}": {
@@ -3936,7 +4280,9 @@
           }
         ],
         "summary": "Get File",
-        "tags": ["files"]
+        "tags": [
+          "files"
+        ]
       }
     },
     "/files/{file_id}/download": {
@@ -3983,7 +4329,9 @@
           }
         ],
         "summary": "Create Download",
-        "tags": ["files"]
+        "tags": [
+          "files"
+        ]
       }
     },
     "/files/{file_id}/shares": {
@@ -4034,7 +4382,9 @@
           }
         ],
         "summary": "List Shares",
-        "tags": ["shares"]
+        "tags": [
+          "shares"
+        ]
       },
       "post": {
         "description": "Share one of the caller's uploaded files with one recipient.",
@@ -4089,7 +4439,9 @@
           }
         ],
         "summary": "Create Share",
-        "tags": ["shares"]
+        "tags": [
+          "shares"
+        ]
       }
     },
     "/files/{file_id}/shares/{share_id}": {
@@ -4139,7 +4491,9 @@
           }
         ],
         "summary": "Revoke Share",
-        "tags": ["shares"]
+        "tags": [
+          "shares"
+        ]
       }
     },
     "/healthz": {
@@ -4163,7 +4517,9 @@
           }
         },
         "summary": "Liveness",
-        "tags": ["health"]
+        "tags": [
+          "health"
+        ]
       }
     },
     "/me": {
@@ -4188,7 +4544,9 @@
           }
         ],
         "summary": "Me",
-        "tags": ["identity"]
+        "tags": [
+          "identity"
+        ]
       }
     },
     "/nodes/enrollments": {
@@ -4228,7 +4586,9 @@
           }
         },
         "summary": "Request Enrollment",
-        "tags": ["nodes"]
+        "tags": [
+          "nodes"
+        ]
       }
     },
     "/nodes/enrollments/by-client": {
@@ -4273,7 +4633,9 @@
           }
         ],
         "summary": "Enroll By Client",
-        "tags": ["nodes"]
+        "tags": [
+          "nodes"
+        ]
       }
     },
     "/nodes/enrollments/by-cloud": {
@@ -4313,7 +4675,9 @@
           }
         },
         "summary": "Enroll By Cloud",
-        "tags": ["nodes"]
+        "tags": [
+          "nodes"
+        ]
       }
     },
     "/nodes/enrollments/by-token": {
@@ -4353,7 +4717,9 @@
           }
         },
         "summary": "Enroll By Token",
-        "tags": ["nodes"]
+        "tags": [
+          "nodes"
+        ]
       }
     },
     "/nodes/enrollments/by-tpm": {
@@ -4393,7 +4759,9 @@
           }
         },
         "summary": "Start Tpm Enrollment",
-        "tags": ["nodes"]
+        "tags": [
+          "nodes"
+        ]
       }
     },
     "/nodes/enrollments/by-tpm/{enrollment_id}/complete": {
@@ -4445,7 +4813,9 @@
           }
         },
         "summary": "Complete Tpm Enrollment",
-        "tags": ["nodes"]
+        "tags": [
+          "nodes"
+        ]
       }
     },
     "/nodes/enrollments/{enrollment_id}": {
@@ -4486,7 +4856,9 @@
           }
         },
         "summary": "Get Enrollment",
-        "tags": ["nodes"]
+        "tags": [
+          "nodes"
+        ]
       }
     },
     "/nodes/enrollments/{enrollment_id}/complete": {
@@ -4538,7 +4910,9 @@
           }
         },
         "summary": "Complete Enrollment",
-        "tags": ["nodes"]
+        "tags": [
+          "nodes"
+        ]
       }
     },
     "/pki/nodes/ca": {
@@ -4556,7 +4930,9 @@
           }
         },
         "summary": "Ca Der",
-        "tags": ["pki"]
+        "tags": [
+          "pki"
+        ]
       }
     },
     "/pki/nodes/ca/pem": {
@@ -4574,7 +4950,9 @@
           }
         },
         "summary": "Ca Pem",
-        "tags": ["pki"]
+        "tags": [
+          "pki"
+        ]
       }
     },
     "/pki/nodes/crl": {
@@ -4592,7 +4970,9 @@
           }
         },
         "summary": "Crl",
-        "tags": ["pki"]
+        "tags": [
+          "pki"
+        ]
       }
     },
     "/pki/nodes/crl/delta": {
@@ -4610,7 +4990,9 @@
           }
         },
         "summary": "Crl Delta",
-        "tags": ["pki"]
+        "tags": [
+          "pki"
+        ]
       }
     },
     "/pki/nodes/ocsp": {
@@ -4628,7 +5010,9 @@
           }
         },
         "summary": "Ocsp",
-        "tags": ["pki"]
+        "tags": [
+          "pki"
+        ]
       }
     },
     "/pki/nodes/ocsp/{encoded}": {
@@ -4667,7 +5051,9 @@
           }
         },
         "summary": "Ocsp Get",
-        "tags": ["pki"]
+        "tags": [
+          "pki"
+        ]
       }
     },
     "/readyz": {
@@ -4691,7 +5077,9 @@
           }
         },
         "summary": "Readiness",
-        "tags": ["health"]
+        "tags": [
+          "health"
+        ]
       }
     },
     "/shared-with-me": {
@@ -4720,7 +5108,9 @@
           }
         ],
         "summary": "List Shared With Me",
-        "tags": ["shares"]
+        "tags": [
+          "shares"
+        ]
       }
     },
     "/shared-with-me/{share_id}/download": {
@@ -4767,7 +5157,9 @@
           }
         ],
         "summary": "Create Shared Download",
-        "tags": ["shares"]
+        "tags": [
+          "shares"
+        ]
       }
     },
     "/shares/access": {
@@ -4810,7 +5202,9 @@
           }
         },
         "summary": "Describe Share",
-        "tags": ["share access"]
+        "tags": [
+          "share access"
+        ]
       }
     },
     "/shares/access/code": {
@@ -4852,7 +5246,9 @@
           }
         },
         "summary": "Send Code",
-        "tags": ["share access"]
+        "tags": [
+          "share access"
+        ]
       }
     },
     "/shares/access/downloads": {
@@ -4892,7 +5288,9 @@
           }
         },
         "summary": "Create Share Download",
-        "tags": ["share access"]
+        "tags": [
+          "share access"
+        ]
       }
     },
     "/shares/access/verify": {
@@ -4932,7 +5330,9 @@
           }
         },
         "summary": "Verify Code",
-        "tags": ["share access"]
+        "tags": [
+          "share access"
+        ]
       }
     }
   }

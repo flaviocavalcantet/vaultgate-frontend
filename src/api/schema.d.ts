@@ -1931,6 +1931,8 @@ export interface components {
       id: string
       /** Is Active */
       is_active: boolean
+      /** Is Admin */
+      is_admin: boolean
       /** Issuer */
       issuer: string
       /** Last Login At */
