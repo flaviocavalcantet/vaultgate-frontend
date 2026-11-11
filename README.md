@@ -4,8 +4,9 @@ The web frontend of [VaultGate](https://github.com/flaviocavalcantet/vaultgate),
 secure file vault: React and TypeScript, built with Vite.
 
 The plan, the stack and the reasons behind them are in
-**[docs/architecture.md](docs/architecture.md)**. So far: the foundation (F0) and
-sign-in (F1). Files are next.
+**[docs/architecture.md](docs/architecture.md)**. So far: the foundation (F0),
+sign-in (F1) and files (F2: the list, uploads with progress, scan states, downloads).
+Sharing is next.
 
 ## Running it
 
