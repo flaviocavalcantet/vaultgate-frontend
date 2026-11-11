@@ -39,6 +39,7 @@ src/
   i18n/         the strings
   api/          the generated API client (from F1)
   test/         test setup and helpers
+dev/            development-only settings (config.k3d.json, for `npm run dev:k3d`)
 ```
 
 - **Features own their code.** A feature imports from `components`, `config`, `api` and
