@@ -127,11 +127,16 @@ replace `api/openapi.json` and run `npm run api:types`.
   calls to the API, the gateway and the identity provider only; forms to the gateway
   only (downloads); no frames, plugins or `<base>`. Also `nosniff`, `no-referrer`, and a
   cross-origin opener policy.
+- **TLS** when given a certificate and key (`VAULTGATE_TLS_CERT_FILE`,
+  `VAULTGATE_TLS_KEY_FILE`): TLS 1.3 only and HSTS, and the pair is reloaded when it
+  changes (checked every `VAULTGATE_TLS_RELOAD_INTERVAL_SECONDS`, 60 by default), as
+  cert-manager renews it in place. The JavaScript it serves holds the user's tokens, so
+  it must arrive unaltered on every hop, inside a cluster too (VaultGate's M9).
 - **Caching:** the hashed files under `/assets/` for a year, `index.html` checked on
   every load, `/config.json` never stored.
 - **CI** builds the image on every PR, runs it as it will run (read-only, the headers
   and config from the environment, an unsafe setting refused), scans it with Trivy, and
-  on main publishes `ghcr.io/<owner>/vaultgate-frontend:<commit>` and `:main`.
+  checks TLS (1.3 only, HSTS, a renewed certificate loaded), and on main publishes `ghcr.io/<owner>/vaultgate-frontend:<commit>` and `:main`.
 
 ## Milestones
 
