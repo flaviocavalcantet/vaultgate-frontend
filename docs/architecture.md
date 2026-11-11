@@ -159,6 +159,12 @@ replace `api/openapi.json` and run `npm run api:types`.
 - [ ] **F6, Delivery:** the image, published by commit, with the
       Content-Security-Policy (see [The image](#the-image)); deployment by VaultGate's chart
       (VaultGate's M12.5); Playwright and axe against a running VaultGate in CI.
+      Also an optional HTTPS development mode (`npm run dev:k3d`): the development server
+      over TLS with a `localhost` certificate signed by VaultGate's local root, and its
+      settings pointing at the local cluster, so the app is developed against the
+      cluster's HTTPS services from an `https://` origin, as it is deployed. The default
+      `npm run dev` stays plain HTTP for compose, whose services are plain HTTP (an HTTPS
+      page couldn't call them), on loopback where nothing in between can alter the app.
 
 ## Known limits
 
