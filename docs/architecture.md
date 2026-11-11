@@ -127,11 +127,17 @@ replace `api/openapi.json` and run `npm run api:types`.
   calls to the API, the gateway and the identity provider only; forms to the gateway
   only (downloads); no frames, plugins or `<base>`. Also `nosniff`, `no-referrer`, and a
   cross-origin opener policy.
+- **TLS** when given a certificate and key (`VAULTGATE_TLS_CERT_FILE`,
+  `VAULTGATE_TLS_KEY_FILE`): TLS 1.3 only and HSTS, and the pair is reloaded when it
+  changes (checked every `VAULTGATE_TLS_RELOAD_INTERVAL_SECONDS`, 60 by default), as
+  cert-manager renews it in place. The JavaScript it serves holds the user's tokens, so
+  it must arrive unaltered on every hop, inside a cluster too (VaultGate's M9).
 - **Caching:** the hashed files under `/assets/` for a year, `index.html` checked on
   every load, `/config.json` never stored.
 - **CI** builds the image on every PR, runs it as it will run (read-only, the headers
-  and config from the environment, an unsafe setting refused), scans it with Trivy, and
-  on main publishes `ghcr.io/<owner>/vaultgate-frontend:<commit>` and `:main`.
+  and config from the environment, an unsafe setting refused, and with a certificate:
+  TLS 1.3 only, HSTS, a renewed certificate loaded), scans it with Trivy, and on main
+  publishes `ghcr.io/<owner>/vaultgate-frontend:<commit>` and `:main`.
 
 ## Milestones
 
@@ -153,6 +159,12 @@ replace `api/openapi.json` and run `npm run api:types`.
 - [ ] **F6, Delivery:** the image, published by commit, with the
       Content-Security-Policy (see [The image](#the-image)); deployment by VaultGate's chart
       (VaultGate's M12.5); Playwright and axe against a running VaultGate in CI.
+      Also an optional HTTPS development mode (`npm run dev:k3d`): the development server
+      over TLS with a `localhost` certificate signed by VaultGate's local root, and its
+      settings pointing at the local cluster, so the app is developed against the
+      cluster's HTTPS services from an `https://` origin, as it is deployed. The default
+      `npm run dev` stays plain HTTP for compose, whose services are plain HTTP (an HTTPS
+      page couldn't call them), on loopback where nothing in between can alter the app.
 
 ## Known limits
 
