@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet } from 'react-router'
 
+import { useAuth } from '@/features/auth/useAuth'
+
 const navLink = ({ isActive }: { isActive: boolean }) =>
   [
     'rounded px-3 py-2 text-sm font-medium',
@@ -12,6 +14,7 @@ const navLink = ({ isActive }: { isActive: boolean }) =>
 /** The frame every page shares: skip link, header with the main navigation, main area. */
 export function AppShell() {
   const { t } = useTranslation()
+  const { user, signOut } = useAuth()
   return (
     <div className="flex min-h-dvh flex-col">
       <a
@@ -32,6 +35,18 @@ export function AppShell() {
               </li>
             </ul>
           </nav>
+          {user ? (
+            <div className="ml-auto flex items-center gap-3 text-sm">
+              <span>{t('nav.signedInAs', { name: user.name })}</span>
+              <button
+                type="button"
+                onClick={() => void signOut()}
+                className="rounded border border-slate-300 px-3 py-1.5 font-medium hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-900"
+              >
+                {t('nav.signOut')}
+              </button>
+            </div>
+          ) : null}
         </div>
       </header>
       <main id="main" tabIndex={-1} className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">

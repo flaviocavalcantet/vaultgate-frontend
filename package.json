@@ -16,11 +16,15 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "npm run typecheck && npm run lint && npm run format:check && npm run test && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm run test && npm run build",
+    "api:types": "npx --yes openapi-typescript@7.13.0 api/openapi.json -o src/api/schema.d.ts && prettier --write src/api/schema.d.ts",
+    "api:check": "npm run api:types && git diff --exit-code -- src/api/schema.d.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.107.1",
     "i18next": "^27.1.1",
+    "oidc-client-ts": "^3.5.0",
+    "openapi-fetch": "^0.17.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-i18next": "^18.0.1",
@@ -37,6 +41,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
     "jsdom": "^29.1.1",
+    "msw": "^3.0.4",
     "oxlint": "^1.93.0",
     "prettier": "^3.9.10",
     "tailwindcss": "^4.3.5",

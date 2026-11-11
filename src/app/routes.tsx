@@ -1,6 +1,9 @@
 import type { RouteObject } from 'react-router'
 
 import { AppShell } from '@/components/AppShell'
+import { CallbackPage } from '@/features/auth/CallbackPage'
+import { RequireAuth } from '@/features/auth/RequireAuth'
+import { CALLBACK_PATH } from '@/features/auth/userManager'
 import { HomePage } from '@/features/home/HomePage'
 
 import { ErrorPage } from './ErrorPage'
@@ -13,7 +16,9 @@ export const routes: RouteObject[] = [
     element: <AppShell />,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <HomePage /> },
+      // Everything behind the sign-in. Features add their routes here.
+      { element: <RequireAuth />, children: [{ index: true, element: <HomePage /> }] },
+      { path: CALLBACK_PATH, element: <CallbackPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

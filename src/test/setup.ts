@@ -2,6 +2,14 @@ import '@testing-library/jest-dom/vitest'
 import '@/i18n/i18n'
 
 import { cleanup } from '@testing-library/react'
-import { afterEach } from 'vitest'
+import { afterAll, afterEach, beforeAll } from 'vitest'
 
-afterEach(cleanup)
+import { server } from './server'
+
+// A request no handler knows fails the test: nothing reaches a real network.
+beforeAll(() => server.listen({ onUnhandledFrame: 'error' }))
+afterEach(() => {
+  cleanup()
+  server.resetHandlers()
+})
+afterAll(() => server.close())
