@@ -33,6 +33,13 @@ export function AppShell() {
                   {t('nav.home')}
                 </NavLink>
               </li>
+              {user ? (
+                <li>
+                  <NavLink to="/files" className={navLink}>
+                    {t('nav.files')}
+                  </NavLink>
+                </li>
+              ) : null}
             </ul>
           </nav>
           {user ? (

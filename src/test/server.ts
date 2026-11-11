@@ -13,6 +13,7 @@ export const alice: components['schemas']['UserOut'] = {
   email: 'alice@example.test',
   name: 'Alice Example',
   groups: ['/engineering', '/vaultgate-users'],
+  is_admin: false,
   is_active: true,
   created_at: '2026-01-05T09:00:00Z',
   last_login_at: '2026-11-10T08:30:00Z',

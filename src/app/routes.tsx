@@ -4,6 +4,7 @@ import { AppShell } from '@/components/AppShell'
 import { CallbackPage } from '@/features/auth/CallbackPage'
 import { RequireAuth } from '@/features/auth/RequireAuth'
 import { CALLBACK_PATH } from '@/features/auth/userManager'
+import { FilesPage } from '@/features/files/FilesPage'
 import { HomePage } from '@/features/home/HomePage'
 
 import { ErrorPage } from './ErrorPage'
@@ -17,7 +18,13 @@ export const routes: RouteObject[] = [
     errorElement: <ErrorPage />,
     children: [
       // Everything behind the sign-in. Features add their routes here.
-      { element: <RequireAuth />, children: [{ index: true, element: <HomePage /> }] },
+      {
+        element: <RequireAuth />,
+        children: [
+          { index: true, element: <HomePage /> },
+          { path: 'files', element: <FilesPage /> },
+        ],
+      },
       { path: CALLBACK_PATH, element: <CallbackPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],

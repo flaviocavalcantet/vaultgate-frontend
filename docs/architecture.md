@@ -95,6 +95,25 @@ regenerates the types and fails if they differ from what is committed
 (`npm run api:check`), so the types can't drift from the document. To take a newer API,
 replace `api/openapi.json` and run `npm run api:types`.
 
+## Files
+
+- **The list** is the API's `GET /files`, a page at a time (20). While any file on the
+  page is still uploading or being scanned, it is asked again every 3 seconds, and no
+  more once all have settled.
+- **An upload** is two requests: `POST /files` registers the file and returns a
+  single-use upload intent; the bytes then go to the intent's gateway address with
+  `XMLHttpRequest`, which reports progress (`fetch` doesn't). The intent's token goes
+  to the gateway only; the user's access token goes to the API only. An upload can be
+  cancelled, and leaving the page cancels what is still sending.
+- **The state** shown is the upload's, then the scan's: scanning, clean, quarantined
+  (with the kinds and counts of what was found, never the content), or unscannable,
+  and whether an administrator released it. Text carries it; colour only repeats it.
+- **A download** asks the API for a download intent at the moment of the click (it
+  lasts minutes and works once) and submits a hidden form with its token to the
+  gateway's address (vaultgate ADR 0018). The browser's downloader streams the file to
+  disk at any size, and the token never appears in an address. The form is removed as
+  soon as it is submitted.
+
 ## Milestones
 
 - [x] **F0, Foundation:** the scaffold, tooling and CI; the app's frame (layout,
@@ -102,8 +121,9 @@ replace `api/openapi.json` and run `npm run api:types`.
 - [x] **F1, Sign-in:** login and logout through the OpenID Connect provider, the
       signed-in user (`/me`), the guard for signed-in routes, session expiry; the
       generated API client. See [Sign-in](#sign-in).
-- [ ] **F2, Files:** the list; upload with progress (register the file with the API,
+- [x] **F2, Files:** the list; upload with progress (register the file with the API,
       then send it to the gateway); scan status (pending, clean, quarantined); download.
+      See [Files](#files).
 - [ ] **F3, Sharing:** share a file and revoke a share; "shared with me"; the external
       recipient's page (link, emailed code, download), which needs no account.
 - [ ] **F4, Administration:** the guard for admin routes (see [Sign-in](#sign-in));
@@ -116,7 +136,7 @@ replace `api/openapi.json` and run `npm run api:types`.
 
 ## Known limits
 
-- **Large downloads.** The gateway takes the download token in a request header, so the
-  browser can't follow a plain link. F2 streams to disk where the browser can (the File
-  System Access API) and falls back to memory for small files.
 - **No file deletion.** The API has no route for it, so the app doesn't offer it.
+- **A failed download shows in the browser's download list,** not in the page: once
+  the form is submitted, the page doesn't see the gateway's answer. The intent is asked
+  for just before, so a refusal is rare (the scan state changing in between).
