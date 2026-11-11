@@ -135,8 +135,9 @@ replace `api/openapi.json` and run `npm run api:types`.
 - **Caching:** the hashed files under `/assets/` for a year, `index.html` checked on
   every load, `/config.json` never stored.
 - **CI** builds the image on every PR, runs it as it will run (read-only, the headers
-  and config from the environment, an unsafe setting refused), scans it with Trivy, and
-  checks TLS (1.3 only, HSTS, a renewed certificate loaded), and on main publishes `ghcr.io/<owner>/vaultgate-frontend:<commit>` and `:main`.
+  and config from the environment, an unsafe setting refused, and with a certificate:
+  TLS 1.3 only, HSTS, a renewed certificate loaded), scans it with Trivy, and on main
+  publishes `ghcr.io/<owner>/vaultgate-frontend:<commit>` and `:main`.
 
 ## Milestones
 
