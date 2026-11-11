@@ -64,19 +64,51 @@ src/
 - **Checks before every push:** `npm run check` (types, lint, format, tests, build), the
   same steps CI runs.
 
+## Sign-in
+
+- **The flow:** authorization code with PKCE, as a public client (`oidc-client-ts`).
+  The provider sends the browser back to `/auth/callback`, where the code is exchanged
+  once, and the user lands on the page they were going to. That destination is only
+  ever a path inside the app: anything else becomes the start page.
+- **Tokens are in memory only.** Nothing is written to `localStorage` or
+  `sessionStorage` but the flow's own state for the seconds of the redirect (the PKCE
+  verifier, which is no credential). So a reload starts signed out. While the
+  provider's own session lasts, signing in again asks for no password: it is one click.
+- **The access token goes to the API only,** added by the API client
+  (`src/api/client.ts`) to requests for the API's address, and renewed with the refresh
+  token before it expires.
+- **A session ends** when the token expires and can't be renewed, or when the API
+  answers 401 to a request that carried it. The app then drops the token and says so
+  on the sign-in page.
+- **Guards decide what a page shows, never what a user may do.** `RequireAuth` shows the
+  sign-in page in place of a route that needs a session. The API checks the token and
+  the access policies on every request, whatever the page shows.
+- **Admin routes wait for the API.** Who is an administrator is the API's setting (its
+  admin groups), and `/me` doesn't say yet whether the caller is one. The frontend
+  won't copy that setting: the admin guard comes with F4, once `/me` answers it.
+
+## The API client
+
+`api/openapi.json` is the API's OpenAPI document, exported from the `vaultgate`
+repository, and `src/api/schema.d.ts` is generated from it (`npm run api:types`). CI
+regenerates the types and fails if they differ from what is committed
+(`npm run api:check`), so the types can't drift from the document. To take a newer API,
+replace `api/openapi.json` and run `npm run api:types`.
+
 ## Milestones
 
 - [x] **F0, Foundation:** the scaffold, tooling and CI; the app's frame (layout,
       navigation, error and not-found pages); runtime configuration; translation-ready text.
-- [ ] **F1, Sign-in:** login and logout through the OpenID Connect provider, the
-      signed-in user (`/me`), guards for signed-in and admin routes, session expiry; the
-      generated API client.
+- [x] **F1, Sign-in:** login and logout through the OpenID Connect provider, the
+      signed-in user (`/me`), the guard for signed-in routes, session expiry; the
+      generated API client. See [Sign-in](#sign-in).
 - [ ] **F2, Files:** the list; upload with progress (register the file with the API,
       then send it to the gateway); scan status (pending, clean, quarantined); download.
 - [ ] **F3, Sharing:** share a file and revoke a share; "shared with me"; the external
       recipient's page (link, emailed code, download), which needs no account.
-- [ ] **F4, Administration:** quarantine (release, rescan); access policies, with the
-      evaluate tool; users and groups; the audit log.
+- [ ] **F4, Administration:** the guard for admin routes (see [Sign-in](#sign-in));
+      quarantine (release, rescan); access policies, with the evaluate tool; users and
+      groups; the audit log.
 - [ ] **F5, Nodes:** enrollment requests with fingerprint confirmation; enrollment
       tokens; TPM registrations; revocation.
 - [ ] **F6, Delivery:** the image, published by commit; deployment; the
