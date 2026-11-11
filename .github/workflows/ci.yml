@@ -24,6 +24,8 @@ jobs:
       - run: npm run format:check
       - run: npm test
       - run: npm run build
+      # The API's types are the ones api/openapi.json generates, not hand-edited.
+      - run: npm run api:check
 
   # Known vulnerabilities in what ships to the browser (the runtime dependencies).
   audit:
