@@ -49,3 +49,57 @@ jobs:
           go-version: '1.26'
       - run: go install github.com/zricethezav/gitleaks/v8@v8.30.1
       - run: gitleaks git --redact --no-banner .
+
+  # The image (F6): built on every PR and checked as it will run (non-root, read-only
+  # root, the headers and config written from the environment), scanned, and on main
+  # published to GHCR by commit, like VaultGate's own images: ghcr.io/<owner>/
+  # vaultgate-frontend:<commit>, and :main. VaultGate's chart runs it (its frontend.*).
+  image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE: ghcr.io/${{ github.repository_owner }}/vaultgate-frontend
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build
+        run: docker build -t vaultgate-frontend:check .
+      - name: Check
+        run: |
+          docker run -d --name frontend --read-only --tmpfs /tmp -p 127.0.0.1:8080:8080 \
+            -e VAULTGATE_API_URL=https://api.example.test \
+            -e VAULTGATE_GATEWAY_URL=https://files.example.test \
+            -e VAULTGATE_OIDC_AUTHORITY=https://sso.example.test/realms/vaultgate \
+            vaultgate-frontend:check
+          for i in $(seq 1 20); do curl -sf http://127.0.0.1:8080/healthz && break; sleep 1; done
+          headers=$(curl -sfI http://127.0.0.1:8080/files)
+          echo "$headers"
+          echo "$headers" | grep -q "connect-src 'self' https://api.example.test https://files.example.test https://sso.example.test"
+          echo "$headers" | grep -q "form-action https://files.example.test"
+          echo "$headers" | grep -qi '^x-content-type-options: nosniff'
+          curl -sf http://127.0.0.1:8080/config.json | grep -q '"gatewayUrl": "https://files.example.test"'
+          test "$(docker exec frontend id -u)" = 101
+          # An unsafe setting stops the start.
+          ! docker run --rm --read-only --tmpfs /tmp -e VAULTGATE_API_URL='https://a.test/"; x' \
+            -e VAULTGATE_GATEWAY_URL=https://g.test -e VAULTGATE_OIDC_AUTHORITY=https://k.test \
+            vaultgate-frontend:check
+      - name: Trivy
+        run: >-
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.76.2
+          image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1
+          vaultgate-frontend:check
+      # BuildKit's push, as one image manifest (VaultGate's lesson: GHCR refused the
+      # Docker daemon's push of an index with an attestation).
+      - name: Publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker buildx create --use --name publish
+          docker buildx build --push --provenance=false \
+            -t "$IMAGE:$GITHUB_SHA" -t "$IMAGE:main" \
+            --label "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --label "org.opencontainers.image.revision=$GITHUB_SHA" \
+            .

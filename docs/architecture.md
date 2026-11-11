@@ -114,6 +114,25 @@ replace `api/openapi.json` and run `npm run api:types`.
   disk at any size, and the token never appears in an address. The form is removed as
   soon as it is submitted.
 
+## The image
+
+- **nginx, non-root** (`nginxinc/nginx-unprivileged`), serving the built files on 8080.
+  It writes nothing outside `/tmp`, so it runs with a read-only root filesystem.
+- **One image for every deployment.** At start, `deploy/start.sh` reads
+  `VAULTGATE_API_URL`, `VAULTGATE_GATEWAY_URL`, `VAULTGATE_OIDC_AUTHORITY` and
+  `VAULTGATE_OIDC_CLIENT_ID`, and writes `/config.json` and the security headers from
+  them. A value that isn't a plain http(s) address stops the start, since it goes into
+  a header and a JSON file.
+- **The Content-Security-Policy:** the app's own files only (no inline code); network
+  calls to the API, the gateway and the identity provider only; forms to the gateway
+  only (downloads); no frames, plugins or `<base>`. Also `nosniff`, `no-referrer`, and a
+  cross-origin opener policy.
+- **Caching:** the hashed files under `/assets/` for a year, `index.html` checked on
+  every load, `/config.json` never stored.
+- **CI** builds the image on every PR, runs it as it will run (read-only, the headers
+  and config from the environment, an unsafe setting refused), scans it with Trivy, and
+  on main publishes `ghcr.io/<owner>/vaultgate-frontend:<commit>` and `:main`.
+
 ## Milestones
 
 - [x] **F0, Foundation:** the scaffold, tooling and CI; the app's frame (layout,
@@ -131,8 +150,9 @@ replace `api/openapi.json` and run `npm run api:types`.
       groups; the audit log.
 - [ ] **F5, Nodes:** enrollment requests with fingerprint confirmation; enrollment
       tokens; TPM registrations; revocation.
-- [ ] **F6, Delivery:** the image, published by commit; deployment; the
-      Content-Security-Policy; Playwright and axe against a running VaultGate in CI.
+- [ ] **F6, Delivery:** the image, published by commit, with the
+      Content-Security-Policy (see [The image](#the-image)); deployment by VaultGate's chart
+      (VaultGate's M12.5); Playwright and axe against a running VaultGate in CI.
 
 ## Known limits
 

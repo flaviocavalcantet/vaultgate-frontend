@@ -26,6 +26,21 @@ To sign in locally, VaultGate's stack must be running, with this origin allowed 
 the API (`VAULTGATE_CORS_ORIGINS=http://localhost:5173`, which its compose file sets).
 The local users are in the `vaultgate` repository's documentation (for example `alice`).
 
+## The image
+
+```bash
+docker build -t vaultgate-frontend .
+docker run --read-only --tmpfs /tmp -p 8081:8080 \
+  -e VAULTGATE_API_URL=http://localhost:8000 \
+  -e VAULTGATE_GATEWAY_URL=http://localhost:8888 \
+  -e VAULTGATE_OIDC_AUTHORITY=http://localhost:8080/realms/vaultgate \
+  vaultgate-frontend
+```
+
+The settings, the headers it sends and how it is published:
+[docs/architecture.md](docs/architecture.md#the-image). CI publishes it on every merge as
+`ghcr.io/flaviocavalcantet/vaultgate-frontend:<commit>`.
+
 ## The API's types
 
 ```bash
