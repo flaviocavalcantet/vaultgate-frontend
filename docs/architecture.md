@@ -84,9 +84,11 @@ dev/            development-only settings (config.k3d.json, for `npm run dev:k3d
 - **Guards decide what a page shows, never what a user may do.** `RequireAuth` shows the
   sign-in page in place of a route that needs a session. The API checks the token and
   the access policies on every request, whatever the page shows.
-- **Admin routes wait for the API.** Who is an administrator is the API's setting (its
-  admin groups), and `/me` doesn't say yet whether the caller is one. The frontend
-  won't copy that setting: the admin guard comes with F4, once `/me` answers it.
+- **Admin routes follow the API.** Who is an administrator is the API's setting (its
+  admin groups), and `/me` answers it (`is_admin`); the frontend doesn't copy the
+  setting. `RequireAdmin` shows the admin pages to administrators only, and the main
+  navigation offers them only to them. As with every guard, the API refuses admin
+  requests from anyone else whatever the page shows.
 
 ## The API client
 
@@ -142,6 +144,19 @@ replace `api/openapi.json` and run `npm run api:types`.
 - **Shared code:** the download hand-off, the formatters and the button styles live in
   `components/`, used by both the files and the sharing features.
 
+## Administration
+
+- **The admin area** (`/admin`) has its own navigation and is loaded only when opened,
+  so users who never open it don't download it.
+- **Files and scans** (`/admin/files`): every user's uploaded files with their scan,
+  quarantined ones first; the verdict filter and the page are in the address, so a
+  view can be linked. A file's page shows its owner, checksum, verdict, the kinds and
+  counts found (never the content), its releases and what the owner can do with it.
+- **A release** lets the owner past a quarantined or unscannable verdict, for download
+  or for sharing, one at a time, with a reason the API records in the audit log.
+- **A rescan** asks for a confirmation first, since it ends the file's releases; the
+  page then follows the new scan until its verdict.
+
 ## The image
 
 - **nginx, non-root** (`nginxinc/nginx-unprivileged`), serving the built files on 8080.
@@ -182,7 +197,8 @@ replace `api/openapi.json` and run `npm run api:types`.
       See [Sharing](#sharing).
 - [ ] **F4, Administration:** the guard for admin routes (see [Sign-in](#sign-in));
       quarantine (release, rescan); access policies, with the evaluate tool; users and
-      groups; the audit log.
+      groups; the audit log. Done so far: the guard and quarantine (see
+      [Administration](#administration)).
 - [ ] **F5, Nodes:** enrollment requests with fingerprint confirmation; enrollment
       tokens; TPM registrations; revocation.
 - [ ] **F6, Delivery:** the image, published by commit, with the
