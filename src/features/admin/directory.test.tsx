@@ -156,7 +156,7 @@ describe('groups', () => {
     await openAt('/admin/groups', 'Groups')
     const row = within(await screen.findByRole('table')).getByRole('row', { name: /\/finance/ })
     expect(within(row).getByText('3')).toBeVisible()
-    await userEvent.click(within(row).getByRole('link', { name: 'Check the access of /finance' }))
+    await userEvent.click(within(row).getByRole('link', { name: 'Check access for /finance' }))
     await screen.findByRole('heading', { level: 1, name: 'Check access' })
     expect(screen.getByRole('radio', { name: 'A member of these groups' })).toBeChecked()
     expect(screen.getByLabelText('Groups')).toHaveValue('/finance')

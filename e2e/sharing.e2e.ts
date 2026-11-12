@@ -22,7 +22,8 @@ test('an outside recipient opens a share link, confirms the emailed code, and do
   await page.getByLabel('Recipient’s email address').fill(recipient)
   await page.getByLabel('Downloads allowed').fill('2')
   await page.getByRole('button', { name: 'Create link' }).click()
-  const field = page.getByLabel(`Link for ${recipient}`)
+  // A text box: the Revoke button's name ("Revoke the link for …") holds these words too.
+  const field = page.getByRole('textbox', { name: `Link for ${recipient}`, exact: true })
   await expect(field).toBeVisible()
   const link = await field.inputValue()
   expect(new URL(link).pathname).toBe('/s')
