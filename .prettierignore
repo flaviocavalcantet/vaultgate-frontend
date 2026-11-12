@@ -2,3 +2,6 @@ dist
 coverage
 package-lock.json
 api/openapi.json
+test-results
+e2e-report
+playwright-report

@@ -202,6 +202,23 @@ replace `api/openapi.json` and run `npm run api:types`.
 - **The API's validation errors** name the fields it rejected (FastAPI's `loc`): the
   form marks them (`aria-invalid`) and lists them in its message.
 
+## Browser tests
+
+- **Against a real VaultGate**, not a stand-in: Playwright drives Chromium through
+  Keycloak's sign-in, the API, the gateway, the scanner and Mailpit, on VaultGate's
+  local cluster. VaultGate's CI runs them in its `k3d-e2e` job, at the commit of this
+  repository whose image the cluster runs, so the tests and the app always match.
+- **What they cover:** signing in, and that no token is stored outside memory (a page
+  load starts signed out); an upload, its scan and its download; a share link opened by
+  an outside recipient with no account, the emailed code read from Mailpit, the
+  download, the link revoked; a quarantined file blocked, released by an administrator,
+  then downloaded; a user who isn't an administrator kept out; every administration
+  page; Check access as a dry run; the audit log's chain.
+- **Accessibility:** axe checks every page they open for WCAG 2.1 A and AA violations;
+  any violation fails the run.
+- **Trust as a person has it:** the browser trusts VaultGate's local root (Chromium's
+  certificate store), rather than ignoring certificate errors.
+
 ## The image
 
 - **nginx, non-root** (`nginxinc/nginx-unprivileged`), serving the built files on 8080.
@@ -245,9 +262,10 @@ replace `api/openapi.json` and run `npm run api:types`.
       groups; the audit log. See [Administration](#administration).
 - [x] **F5, Nodes:** enrollment requests with fingerprint confirmation; enrollment
       tokens; TPM registrations; revocation. See [Administration](#administration).
-- [ ] **F6, Delivery:** the image, published by commit, with the
+- [x] **F6, Delivery:** the image, published by commit, with the
       Content-Security-Policy (see [The image](#the-image)); deployment by VaultGate's chart
-      (VaultGate's M12.5); Playwright and axe against a running VaultGate in CI.
+      (VaultGate's M12.5); Playwright and axe against a running VaultGate in CI (see
+      [Browser tests](#browser-tests)).
       Also an optional HTTPS development mode (`npm run dev:k3d`): the development server
       over TLS with a `localhost` certificate signed by VaultGate's local root, and its
       settings pointing at the local cluster, so the app is developed against the
