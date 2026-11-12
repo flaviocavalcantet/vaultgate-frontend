@@ -85,6 +85,18 @@ export const routes: RouteObject[] = [
                     }),
                   },
                   {
+                    path: 'tokens',
+                    lazy: async () => ({
+                      Component: (await import('@/features/admin/TokensPage')).TokensPage,
+                    }),
+                  },
+                  {
+                    path: 'tpms',
+                    lazy: async () => ({
+                      Component: (await import('@/features/admin/TpmsPage')).TpmsPage,
+                    }),
+                  },
+                  {
                     path: 'users',
                     lazy: async () => ({
                       Component: (await import('@/features/admin/UsersPage')).UsersPage,

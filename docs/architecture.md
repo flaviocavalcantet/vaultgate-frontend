@@ -188,6 +188,17 @@ replace `api/openapi.json` and run `npm run api:types`.
 - **Nodes** (`/admin/nodes`): enrolled nodes, active or all, with their identity,
   certificate (serial, expiry, renewals) and key fingerprint. **Revoke** asks for a
   confirmation: it revokes the certificate at once and frees the node's name.
+- **Enrollment tokens** (`/admin/tokens`): a single-use token for one node name, with
+  an optional lifetime in minutes (the API's default otherwise). The token is shown
+  once, with a copy button; the API keeps only its hash. Unused tokens can be revoked,
+  after a confirmation.
+- **TPM registrations** (`/admin/tpms`): a TPM, by its endorsement key's fingerprint
+  as the node prints it, registered to enroll one node name by attestation, once.
+  Usable registrations can be revoked, after a confirmation.
+- **Shown once, confirmed first:** secrets the API returns once (the one-time code,
+  the enrollment token) appear in one component (`ShownOnce`), in memory only; every
+  revocation goes through one confirm-then-act button (`ConfirmAction`). Node names
+  and fingerprints are checked against the API's patterns before anything is sent.
 - **The API's validation errors** name the fields it rejected (FastAPI's `loc`): the
   form marks them (`aria-invalid`) and lists them in its message.
 
@@ -232,9 +243,8 @@ replace `api/openapi.json` and run `npm run api:types`.
 - [x] **F4, Administration:** the guard for admin routes (see [Sign-in](#sign-in));
       quarantine (release, rescan); access policies, with the evaluate tool; users and
       groups; the audit log. See [Administration](#administration).
-- [ ] **F5, Nodes:** enrollment requests with fingerprint confirmation; enrollment
-      tokens; TPM registrations; revocation. Done so far: enrollment requests and
-      nodes, with revocation (see [Administration](#administration)).
+- [x] **F5, Nodes:** enrollment requests with fingerprint confirmation; enrollment
+      tokens; TPM registrations; revocation. See [Administration](#administration).
 - [ ] **F6, Delivery:** the image, published by commit, with the
       Content-Security-Policy (see [The image](#the-image)); deployment by VaultGate's chart
       (VaultGate's M12.5); Playwright and axe against a running VaultGate in CI.

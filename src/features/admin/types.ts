@@ -30,3 +30,14 @@ export type NodePage = components['schemas']['Page_NodeOut_']
 export type Enrollment = components['schemas']['AdminEnrollmentOut']
 export type EnrollmentPage = components['schemas']['Page_AdminEnrollmentOut_']
 export type Approval = components['schemas']['ApprovalOut']
+
+export type EnrollmentToken = components['schemas']['TokenOut']
+export type TokenPage = components['schemas']['Page_TokenOut_']
+export type IssuedToken = components['schemas']['IssuedTokenOut']
+export type Tpm = components['schemas']['TpmOut']
+export type TpmPage = components['schemas']['Page_TpmOut_']
+
+/** A node's name, as the API takes it: a DNS label. */
+export const NODE_NAME = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/
+/** A TPM endorsement key's fingerprint, as the node prints it. */
+export const EK_FINGERPRINT = /^SHA256:[A-Za-z0-9+/]{43}$/
