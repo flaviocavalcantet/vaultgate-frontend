@@ -4,7 +4,7 @@ export type Failure = 'invalid' | 'conflict' | 'denied' | 'notFound' | 'unknown'
 export class Refused extends Error {
   override name = 'Refused'
   readonly reason: Failure
-  /** For a 422: the request's fields the API rejected, by name (`groups`, `timezone`...). */
+  /** For a 422: the fields or query parameters the API rejected, by name (`groups`...). */
   readonly fields: string[]
 
   constructor(reason: Failure, fields: string[] = []) {
@@ -23,7 +23,8 @@ const BY_STATUS: Record<number, Failure> = {
 
 /**
  * The fields a 422 names. FastAPI's validation errors locate each problem as
- * `["body", field, ...]`; a check across fields (a time window) has no field of its own.
+ * `["body", field, ...]` or `["query", parameter]`; a check across fields (a time
+ * window) has no field of its own.
  */
 function rejectedFields(body: unknown): string[] {
   if (typeof body !== 'object' || body === null || !('detail' in body)) return []
@@ -32,7 +33,11 @@ function rejectedFields(body: unknown): string[] {
   const fields = detail.flatMap((problem: unknown) => {
     if (typeof problem !== 'object' || problem === null || !('loc' in problem)) return []
     const { loc } = problem
-    return Array.isArray(loc) && loc[0] === 'body' && typeof loc[1] === 'string' ? [loc[1]] : []
+    return Array.isArray(loc) &&
+      (loc[0] === 'body' || loc[0] === 'query') &&
+      typeof loc[1] === 'string'
+      ? [loc[1]]
+      : []
   })
   return [...new Set(fields)]
 }

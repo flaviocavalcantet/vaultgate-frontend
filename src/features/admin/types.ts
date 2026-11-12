@@ -16,3 +16,11 @@ export type EvaluateIn = components['schemas']['EvaluateIn']
 export type Evaluation = components['schemas']['EvaluateOut']
 
 export const ACTIONS: readonly Action[] = ['read', 'upload', 'download', 'share', 'enroll']
+
+export type User = components['schemas']['UserOut']
+export type UserPage = components['schemas']['Page_UserOut_']
+export type Group = components['schemas']['GroupOut']
+export type GroupPage = components['schemas']['Page_GroupOut_']
+export type AuditEvent = components['schemas']['AuditEventOut']
+export type AuditPage = components['schemas']['Page_AuditEventOut_']
+export type Verification = components['schemas']['VerificationOut']

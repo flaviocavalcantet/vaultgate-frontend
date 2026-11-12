@@ -31,6 +31,21 @@ export function AdminLayout() {
               {t('admin.evaluateNav')}
             </NavLink>
           </li>
+          <li>
+            <NavLink to="/admin/users" className={link}>
+              {t('admin.usersNav')}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/admin/groups" className={link}>
+              {t('admin.groupsNav')}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/admin/audit" className={link}>
+              {t('admin.auditNav')}
+            </NavLink>
+          </li>
         </ul>
       </nav>
       <div className="min-w-0 flex-1">
