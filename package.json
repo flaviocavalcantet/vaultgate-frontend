@@ -19,6 +19,7 @@
     "test:watch": "vitest",
     "check": "npm run typecheck && npm run lint && npm run format:check && npm run test && npm run build",
     "api:types": "npx --yes openapi-typescript@7.13.0 api/openapi.json -o src/api/schema.d.ts && prettier --write src/api/schema.d.ts",
+    "e2e": "playwright test",
     "api:check": "npm run api:types && git diff --exit-code -- src/api/schema.d.ts"
   },
   "dependencies": {
@@ -33,6 +34,8 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.65.0",
     "@tailwindcss/vite": "^4.3.5",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",

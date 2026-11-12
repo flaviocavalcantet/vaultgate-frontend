@@ -9,7 +9,8 @@ sign-in (F1), files (F2: the list, uploads with progress, scan states, downloads
 sharing (F3: links for outside recipients and VaultGate users, Shared with me, the
 recipient's page), administration (F4: quarantine, access policies with the
 evaluate tool, users, groups and the audit log) and nodes (F5: enrollment requests,
-nodes, enrollment tokens and TPM registrations). What's left is F6's browser tests.
+nodes, enrollment tokens and TPM registrations), delivered as an image and tested in
+a browser against a real VaultGate (F6).
 
 ## Running it
 
@@ -49,6 +50,28 @@ npm run dev:k3d    # https://localhost:5173
   the cluster's API, gateway and Keycloak, on the same ports over HTTPS.
 - The cluster allows `https://localhost:5173` in the API's and gateway's CORS and in
   Keycloak's `vaultgate-web` client.
+
+## Browser tests
+
+`npm run check` tests the app against a stand-in for the API. The browser tests
+(`e2e/`, Playwright and axe) run it against a real VaultGate: they sign in through
+Keycloak as the local users, upload files and wait for their scans, share one with an
+outside recipient who reads the code from Mailpit, have an administrator release a
+quarantined file, open every administration page, and check each page for WCAG 2.1 A
+and AA violations with axe.
+
+They run against VaultGate's local cluster (`make k3d-up` in the `vaultgate`
+repository), which deploys this app on https://localhost:5174. VaultGate's CI runs them
+there on every pull request (`make k3d-browser`). To run them yourself, the browser
+must trust VaultGate's local root, as yours does:
+
+```bash
+npx playwright install chromium
+certutil -d sql:$HOME/.pki/nssdb -A -t C,, -n vaultgate-local -i ~/.vaultgate/pki/root-ca.crt
+npm run e2e        # VAULTGATE_E2E_URL for another address, VAULTGATE_E2E_MAILPIT for Mailpit
+```
+
+They leave their files and shares behind, under names that start with `e2e-`.
 
 ## The image
 
