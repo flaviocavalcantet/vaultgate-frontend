@@ -177,6 +177,17 @@ replace `api/openapi.json` and run `npm run api:types`.
   or action prefix, outcome, user, target, a time range) are in the address, so a view
   can be linked. **Check the chain** walks the hash chain and says whether any event
   was changed or removed, and where.
+- **Enrollment requests** (`/admin/enrollments`): machines asking for a node
+  certificate (vaultgate ADR 0014), those still waiting or all. **Approve** asks for
+  the key fingerprint the node shows its operator, read to the administrator over a
+  channel they trust; the API compares it with the request's. While a request waits,
+  the page doesn't show the request's own fingerprint, so the confirmation comes from
+  the node's side rather than from copying the page. The answer, the one-time code
+  the node completes its enrollment with, is shown once with a copy button.
+  **Reject** asks for a confirmation.
+- **Nodes** (`/admin/nodes`): enrolled nodes, active or all, with their identity,
+  certificate (serial, expiry, renewals) and key fingerprint. **Revoke** asks for a
+  confirmation: it revokes the certificate at once and frees the node's name.
 - **The API's validation errors** name the fields it rejected (FastAPI's `loc`): the
   form marks them (`aria-invalid`) and lists them in its message.
 
@@ -222,7 +233,8 @@ replace `api/openapi.json` and run `npm run api:types`.
       quarantine (release, rescan); access policies, with the evaluate tool; users and
       groups; the audit log. See [Administration](#administration).
 - [ ] **F5, Nodes:** enrollment requests with fingerprint confirmation; enrollment
-      tokens; TPM registrations; revocation.
+      tokens; TPM registrations; revocation. Done so far: enrollment requests and
+      nodes, with revocation (see [Administration](#administration)).
 - [ ] **F6, Delivery:** the image, published by commit, with the
       Content-Security-Policy (see [The image](#the-image)); deployment by VaultGate's chart
       (VaultGate's M12.5); Playwright and axe against a running VaultGate in CI.
