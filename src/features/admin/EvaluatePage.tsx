@@ -1,5 +1,6 @@
 import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useSearchParams } from 'react-router'
 
 import { formatDateTime } from '@/components/format'
 import { PageHeading } from '@/components/PageHeading'
@@ -18,10 +19,12 @@ const hint = 'mt-1 text-sm text-slate-600 dark:text-slate-300'
 export function EvaluatePage() {
   const { t } = useTranslation()
   const evaluate = useEvaluate()
+  // Opened from a user's or a group's page, it starts with them.
+  const [params] = useSearchParams()
   const [action, setAction] = useState<Action>('download')
-  const [subject, setSubject] = useState<'groups' | 'user'>('groups')
-  const [groups, setGroups] = useState('')
-  const [userId, setUserId] = useState('')
+  const [subject, setSubject] = useState<'groups' | 'user'>(params.has('user') ? 'user' : 'groups')
+  const [groups, setGroups] = useState(params.get('group') ?? '')
+  const [userId, setUserId] = useState(params.get('user') ?? '')
   const [clientIp, setClientIp] = useState('')
   const [at, setAt] = useState('')
   const id = useId()

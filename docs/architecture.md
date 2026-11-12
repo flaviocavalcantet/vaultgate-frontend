@@ -165,6 +165,18 @@ replace `api/openapi.json` and run `npm run api:types`.
 - **Check access** (`/admin/evaluate`) is the API's dry run: an action, a member of
   some groups or a user by ID, an address and, optionally, a time; it shows the
   decision, why, and the allow and deny policies that match.
+- **Users** (`/admin/users`): everyone who has signed in, with groups, role, state and
+  last sign-in. A user's page shows their ID, identity provider and subject, and leads
+  to Check access for them and to their audit events. Accounts and groups are the
+  identity provider's: the app shows them, it doesn't change them.
+- **Groups** (`/admin/groups`): the groups seen in sign-in tokens, with their member
+  counts, each leading to Check access for its members.
+- **The audit log** (`/admin/audit`): events newest first, with when, what, the
+  outcome, who (linked to the user), on what (linked to the file or user) and from
+  where; each event's details open as text, never rendered as markup. Filters (action
+  or action prefix, outcome, user, target, a time range) are in the address, so a view
+  can be linked. **Check the chain** walks the hash chain and says whether any event
+  was changed or removed, and where.
 - **The API's validation errors** name the fields it rejected (FastAPI's `loc`): the
   form marks them (`aria-invalid`) and lists them in its message.
 
@@ -206,10 +218,9 @@ replace `api/openapi.json` and run `npm run api:types`.
 - [x] **F3, Sharing:** share a file and revoke a share; "shared with me"; the external
       recipient's page (link, emailed code, download), which needs no account.
       See [Sharing](#sharing).
-- [ ] **F4, Administration:** the guard for admin routes (see [Sign-in](#sign-in));
+- [x] **F4, Administration:** the guard for admin routes (see [Sign-in](#sign-in));
       quarantine (release, rescan); access policies, with the evaluate tool; users and
-      groups; the audit log. Done so far: the guard, quarantine, and access policies
-      with the evaluate tool (see [Administration](#administration)).
+      groups; the audit log. See [Administration](#administration).
 - [ ] **F5, Nodes:** enrollment requests with fingerprint confirmation; enrollment
       tokens; TPM registrations; revocation.
 - [ ] **F6, Delivery:** the image, published by commit, with the
