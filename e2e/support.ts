@@ -81,7 +81,7 @@ export async function codeFor(
 
 /** Uploads a file from the files page and waits for its scan's verdict. */
 export async function upload(page: Page, name: string, content: Buffer | string, verdict: string) {
-  await page.getByLabel('Upload files').setInputFiles({
+  await page.getByLabel('Upload files', { exact: true }).setInputFiles({
     name,
     mimeType: 'application/octet-stream',
     buffer: Buffer.from(content),
