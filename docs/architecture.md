@@ -115,6 +115,33 @@ replace `api/openapi.json` and run `npm run api:types`.
   disk at any size, and the token never appears in an address. The form is removed as
   soon as it is submitted.
 
+## Sharing
+
+- **An owner shares** a file from its sharing page (`/files/<id>/sharing`): one link
+  per recipient, named by email address, for someone outside VaultGate (who confirms a
+  code sent to the address) or for a VaultGate user (who signs in with it). Expiry and
+  downloads are optional; the API applies its defaults and limits. The page lists the
+  file's links with their state, and revokes the active ones. A file its scan keeps
+  from sharing gets no new link, but its links can still be revoked.
+- **The link** is built by the app from the token the API returns once:
+  `<app>/s#<token>`, this app's recipient page. The token is in the fragment, which a
+  browser never sends to a server, so it stays out of access logs and `Referer`
+  headers. The API keeps only its hash, so the link is shown once, with a copy button.
+- **The recipient's page** (`/s`) needs no account and sits outside the sign-in. It
+  reads the token from the fragment and removes it from the address at once, then
+  follows the API's steps (vaultgate M5): what the link is (the address's hint, expiry
+  and downloads left, never the file's name), a code sent to the address, the code
+  checked for a grant, and downloads with the grant, handed to the browser like an
+  owner's. The token and the grant live in memory only: a reload starts over, with "I
+  already have a code" for a code still valid. A link for a VaultGate user sends them
+  to sign in and to Shared with me.
+- **Shared with me** (`/shared`) lists the files other users shared with the signed-in
+  user's verified address, with the sharer, the expiry and the downloads left, and
+  downloads them the same way. A file whose scan doesn't allow it right now is listed
+  without a download.
+- **Shared code:** the download hand-off, the formatters and the button styles live in
+  `components/`, used by both the files and the sharing features.
+
 ## The image
 
 - **nginx, non-root** (`nginxinc/nginx-unprivileged`), serving the built files on 8080.
@@ -150,8 +177,9 @@ replace `api/openapi.json` and run `npm run api:types`.
 - [x] **F2, Files:** the list; upload with progress (register the file with the API,
       then send it to the gateway); scan status (pending, clean, quarantined); download.
       See [Files](#files).
-- [ ] **F3, Sharing:** share a file and revoke a share; "shared with me"; the external
+- [x] **F3, Sharing:** share a file and revoke a share; "shared with me"; the external
       recipient's page (link, emailed code, download), which needs no account.
+      See [Sharing](#sharing).
 - [ ] **F4, Administration:** the guard for admin routes (see [Sign-in](#sign-in));
       quarantine (release, rescan); access policies, with the evaluate tool; users and
       groups; the audit log.
