@@ -485,7 +485,7 @@ export const en = {
       members: 'Members',
       firstSeen: 'First seen',
       check: 'Check access',
-      checkName: 'Check the access of {{name}}',
+      checkName: 'Check access for {{name}}',
       loading: 'Loading the groups…',
       failed: 'The groups could not be loaded. Try again in a moment.',
       retry: 'Try again',
