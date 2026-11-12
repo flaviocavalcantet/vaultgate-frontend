@@ -26,6 +26,27 @@ To sign in locally, VaultGate's stack must be running, with this origin allowed 
 the API (`VAULTGATE_CORS_ORIGINS=http://localhost:5173`, which its compose file sets).
 The local users are in the `vaultgate` repository's documentation (for example `alice`).
 
+### Against the local cluster, over HTTPS
+
+VaultGate's local Kubernetes cluster (`make k3d-up` in the `vaultgate` repository) serves
+everything over HTTPS, and an HTTPS service is best developed against from an `https://`
+page, as the app is deployed. For that:
+
+```bash
+make dev-cert      # in the vaultgate repository, with its cluster up
+npm run dev:k3d    # https://localhost:5173
+```
+
+- `make dev-cert` copies the cluster's `localhost` certificate to `~/.vaultgate/dev-tls/`
+  (`VAULTGATE_DEV_TLS_DIR` to read it from elsewhere). It is signed by VaultGate's local
+  root, which the browser already trusts for the cluster, so there is nothing new to
+  trust. It lasts a day like the cluster's other certificates: run `make dev-cert` again,
+  and restart the server, when the browser says it has expired.
+- The app's settings come from `dev/config.k3d.json`, in place of `public/config.json`:
+  the cluster's API, gateway and Keycloak, on the same ports over HTTPS.
+- The cluster allows `https://localhost:5173` in the API's and gateway's CORS and in
+  Keycloak's `vaultgate-web` client.
+
 ## The image
 
 ```bash

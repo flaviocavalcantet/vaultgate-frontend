@@ -1,0 +1,8 @@
+{
+  "apiUrl": "https://localhost:8000",
+  "gatewayUrl": "https://localhost:8888",
+  "oidc": {
+    "authority": "https://localhost:8080/realms/vaultgate",
+    "clientId": "vaultgate-web"
+  }
+}
