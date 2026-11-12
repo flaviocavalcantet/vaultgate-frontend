@@ -156,6 +156,17 @@ replace `api/openapi.json` and run `npm run api:types`.
   or for sharing, one at a time, with a reason the API records in the audit log.
 - **A rescan** asks for a confirmation first, since it ends the file's releases; the
   page then follows the new scan until its verdict.
+- **Access policies** (`/admin/policies`): every policy with what it decides and, in
+  words, when it applies (groups, networks, days, time window). A policy's page edits
+  it whole, as the API replaces it: name, effect, actions, groups, networks and
+  exclusions (one per line), weekdays (named in the reader's language, Monday first as
+  the API counts them), a time window and its IANA time zone. Deleting asks for a
+  confirmation. With no policies the list warns that every file request is refused.
+- **Check access** (`/admin/evaluate`) is the API's dry run: an action, a member of
+  some groups or a user by ID, an address and, optionally, a time; it shows the
+  decision, why, and the allow and deny policies that match.
+- **The API's validation errors** name the fields it rejected (FastAPI's `loc`): the
+  form marks them (`aria-invalid`) and lists them in its message.
 
 ## The image
 
@@ -197,8 +208,8 @@ replace `api/openapi.json` and run `npm run api:types`.
       See [Sharing](#sharing).
 - [ ] **F4, Administration:** the guard for admin routes (see [Sign-in](#sign-in));
       quarantine (release, rescan); access policies, with the evaluate tool; users and
-      groups; the audit log. Done so far: the guard and quarantine (see
-      [Administration](#administration)).
+      groups; the audit log. Done so far: the guard, quarantine, and access policies
+      with the evaluate tool (see [Administration](#administration)).
 - [ ] **F5, Nodes:** enrollment requests with fingerprint confirmation; enrollment
       tokens; TPM registrations; revocation.
 - [ ] **F6, Delivery:** the image, published by commit, with the

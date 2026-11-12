@@ -53,6 +53,25 @@ export const routes: RouteObject[] = [
                       Component: (await import('@/features/admin/AdminFilePage')).AdminFilePage,
                     }),
                   },
+                  {
+                    path: 'policies',
+                    lazy: async () => ({
+                      Component: (await import('@/features/admin/PoliciesPage')).PoliciesPage,
+                    }),
+                  },
+                  {
+                    // `new` for a new policy.
+                    path: 'policies/:policyId',
+                    lazy: async () => ({
+                      Component: (await import('@/features/admin/PolicyPage')).PolicyPage,
+                    }),
+                  },
+                  {
+                    path: 'evaluate',
+                    lazy: async () => ({
+                      Component: (await import('@/features/admin/EvaluatePage')).EvaluatePage,
+                    }),
+                  },
                 ],
               },
             ],
