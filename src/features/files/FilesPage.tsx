@@ -1,20 +1,17 @@
 import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 
+import { formatBytes, formatDateTime } from '@/components/format'
 import { PageHeading } from '@/components/PageHeading'
+import { primaryButton as primary, secondaryButton as secondary } from '@/components/styles'
 
 import { FileState } from './FileState'
-import { formatBytes, formatDateTime } from './format'
 import type { FileOut } from './types'
 import { UploadList } from './UploadList'
 import { DownloadRefused, useDownload } from './useDownload'
 import { PAGE_SIZE, useFiles } from './useFiles'
 import { useUploads } from './useUploads'
-
-const primary =
-  'inline-flex cursor-pointer items-center rounded bg-sky-700 px-4 py-2 text-sm font-medium text-white hover:bg-sky-800 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-sky-600'
-const secondary =
-  'rounded border border-slate-300 px-3 py-1.5 text-sm font-medium hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:hover:bg-slate-900'
 
 export function FilesPage() {
   const { t, i18n } = useTranslation()
@@ -124,18 +121,29 @@ export function FilesPage() {
                     <td className="py-3 pr-4">
                       <FileState file={file} />
                     </td>
-                    <td className="py-3 text-right">
-                      {file.downloadable ? (
-                        <button
-                          type="button"
-                          className={secondary}
-                          disabled={download.isPending && download.variables === file.id}
-                          onClick={() => onDownload(file)}
-                          aria-label={t('files.downloadName', { name: file.name })}
-                        >
-                          {t('files.download')}
-                        </button>
-                      ) : null}
+                    <td className="py-3">
+                      <div className="flex justify-end gap-2">
+                        {file.status === 'uploaded' ? (
+                          <Link
+                            to={`/files/${file.id}/sharing`}
+                            className={secondary}
+                            aria-label={t('files.shareName', { name: file.name })}
+                          >
+                            {t('files.share')}
+                          </Link>
+                        ) : null}
+                        {file.downloadable ? (
+                          <button
+                            type="button"
+                            className={secondary}
+                            disabled={download.isPending && download.variables === file.id}
+                            onClick={() => onDownload(file)}
+                            aria-label={t('files.downloadName', { name: file.name })}
+                          >
+                            {t('files.download')}
+                          </button>
+                        ) : null}
+                      </div>
                     </td>
                   </tr>
                 ))}

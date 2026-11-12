@@ -34,11 +34,18 @@ export function AppShell() {
                 </NavLink>
               </li>
               {user ? (
-                <li>
-                  <NavLink to="/files" className={navLink}>
-                    {t('nav.files')}
-                  </NavLink>
-                </li>
+                <>
+                  <li>
+                    <NavLink to="/files" className={navLink}>
+                      {t('nav.files')}
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/shared" className={navLink}>
+                      {t('nav.shared')}
+                    </NavLink>
+                  </li>
+                </>
               ) : null}
             </ul>
           </nav>

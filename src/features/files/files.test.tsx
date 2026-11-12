@@ -2,12 +2,12 @@ import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { delay, http, HttpResponse } from 'msw'
 
+import { submitDownload } from '@/components/download'
+import { formatBytes } from '@/components/format'
 import { CALLBACK_PATH } from '@/features/auth/userManager'
 import { ACCESS_TOKEN, renderApp, signedInUser, fakeUserManager, testConfig } from '@/test/render'
 import { api, server } from '@/test/server'
 
-import { formatBytes } from './format'
-import { submitDownload } from './gateway'
 import type { FileOut } from './types'
 import { mediaType } from './useUploads'
 

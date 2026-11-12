@@ -1,8 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 
 import { useApi } from '@/api/useApi'
-
-import { submitDownload } from './gateway'
+import { submitDownload } from '@/components/download'
 
 /** Why a download intent was refused, in terms a user can act on. */
 export type DownloadFailure = 'unavailable' | 'notFound' | 'denied' | 'unknown'
