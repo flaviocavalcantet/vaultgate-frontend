@@ -7,3 +7,12 @@ export type ReleaseRequest = components['schemas']['ReleaseRequest']
 export type Purpose = NonNullable<ReleaseRequest['purpose']>
 
 export const VERDICTS: readonly Verdict[] = ['pending', 'clean', 'quarantined', 'unscannable']
+
+export type Policy = components['schemas']['PolicyOut']
+export type PolicyIn = components['schemas']['PolicyIn']
+export type PolicyPage = components['schemas']['Page_PolicyOut_']
+export type Action = PolicyIn['actions'][number]
+export type EvaluateIn = components['schemas']['EvaluateIn']
+export type Evaluation = components['schemas']['EvaluateOut']
+
+export const ACTIONS: readonly Action[] = ['read', 'upload', 'download', 'share', 'enroll']

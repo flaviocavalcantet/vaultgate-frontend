@@ -21,6 +21,16 @@ export function AdminLayout() {
               {t('admin.quarantine')}
             </NavLink>
           </li>
+          <li>
+            <NavLink to="/admin/policies" className={link}>
+              {t('admin.policiesNav')}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/admin/evaluate" className={link}>
+              {t('admin.evaluateNav')}
+            </NavLink>
+          </li>
         </ul>
       </nav>
       <div className="min-w-0 flex-1">
