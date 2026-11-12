@@ -8,7 +8,7 @@ export function NotFoundPage() {
   return (
     <>
       <PageHeading title={t('notFound.title')}>{t('notFound.body')}</PageHeading>
-      <Link to="/" className="font-medium text-sky-700 underline dark:text-sky-400">
+      <Link to="/" className="font-medium text-accent underline">
         {t('notFound.back')}
       </Link>
     </>

@@ -10,7 +10,7 @@ export function HomePage() {
     <>
       <PageHeading title={t('home.title')}>{t('home.body')}</PageHeading>
       <section aria-labelledby="account">
-        <h2 id="account" className="mb-3 text-lg font-semibold">
+        <h2 id="account" className="mb-3 text-xl font-semibold">
           {t('home.account')}
         </h2>
         {me.isPending ? <p role="status">{t('home.loading')}</p> : null}
@@ -20,7 +20,7 @@ export function HomePage() {
             <button
               type="button"
               onClick={() => void me.refetch()}
-              className="rounded border border-slate-300 px-3 py-1.5 text-sm font-medium dark:border-slate-700"
+              className="rounded border border-control px-3 py-1.5 text-sm font-medium"
             >
               {t('home.retry')}
             </button>

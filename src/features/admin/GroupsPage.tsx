@@ -33,7 +33,7 @@ export function GroupsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <caption className="sr-only">{t('admin.groups.tableCaption')}</caption>
-              <thead className="border-b border-slate-200 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+              <thead className="border-b border-rule text-sm text-graphite">
                 <tr>
                   <th scope="col" className="py-2 pr-4 font-medium">
                     {t('admin.groups.name')}
@@ -51,7 +51,7 @@ export function GroupsPage() {
               </thead>
               <tbody>
                 {groups.data.items.map((group) => (
-                  <tr key={group.id} className="border-b border-slate-100 dark:border-slate-900">
+                  <tr key={group.id} className="border-b border-rule">
                     <th scope="row" className="py-3 pr-4 font-mono text-sm font-medium">
                       {group.name}
                     </th>

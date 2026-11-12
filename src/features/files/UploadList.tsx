@@ -2,8 +2,7 @@ import { useTranslation } from 'react-i18next'
 
 import type { Upload } from './useUploads'
 
-const button =
-  'rounded border border-slate-300 px-2 py-1 text-sm font-medium hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-900'
+const button = 'rounded border border-control px-2 py-1 text-sm font-medium hover:bg-accent-soft'
 
 /** The uploads started in this page, with their progress; announced as they change. */
 export function UploadList({
@@ -28,10 +27,7 @@ export function UploadList({
               : 0
           const running = state.phase === 'registering' || state.phase === 'sending'
           return (
-            <li
-              key={upload.id}
-              className="flex items-center gap-4 rounded border border-slate-200 p-3 dark:border-slate-800"
-            >
+            <li key={upload.id} className="flex items-center gap-4 rounded border border-rule p-3">
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium">{upload.name}</p>
                 {state.phase === 'sending' ? (
@@ -42,14 +38,14 @@ export function UploadList({
                     aria-label={t('upload.progress', { name: upload.name })}
                   />
                 ) : null}
-                <p role="status" className="text-sm text-slate-600 dark:text-slate-300">
+                <p role="status" className="text-sm text-graphite">
                   {state.phase === 'registering' ? t('upload.registering') : null}
                   {state.phase === 'sending' ? t('upload.sending', { percent }) : null}
                   {state.phase === 'done' ? t('upload.done') : null}
                   {state.phase === 'cancelled' ? t('upload.cancelled') : null}
                 </p>
                 {state.phase === 'failed' ? (
-                  <p role="alert" className="text-sm font-medium text-rose-700 dark:text-rose-300">
+                  <p role="alert" className="text-sm font-medium text-seal">
                     {t(`upload.failed.${state.reason}`)}
                   </p>
                 ) : null}

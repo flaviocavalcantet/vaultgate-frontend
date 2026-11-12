@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate } from 'react-router'
 
 import { formatDateTime } from '@/components/format'
+import { FrontDoor } from '@/components/FrontDoor'
 import { PageHeading } from '@/components/PageHeading'
 import { primaryButton, secondaryButton } from '@/components/styles'
 
@@ -36,10 +37,10 @@ export function ShareAccessPage() {
   else body = <Recipient token={token} access={access.data} />
 
   return (
-    <>
-      <PageHeading title={t('access.title')} />
+    <FrontDoor>
+      <PageHeading door title={t('access.title')} />
       {body}
-    </>
+    </FrontDoor>
   )
 }
 
@@ -126,7 +127,7 @@ function External({ token }: { token: string }) {
   return (
     <>
       <div aria-live="polite" className="mb-4">
-        {problem ? <p className="font-medium text-rose-700 dark:text-rose-300">{problem}</p> : null}
+        {problem ? <p className="font-medium text-seal">{problem}</p> : null}
         {step.name === 'code' ? (
           <p>{step.sentTo ? t('access.sent', { to: step.sentTo }) : t('access.sentNoAddress')}</p>
         ) : null}
@@ -223,9 +224,9 @@ function CodeForm({
           aria-describedby={`${id}-hint`}
           value={code}
           onChange={(event) => setCode(event.target.value)}
-          className="mt-1 block w-40 rounded border border-slate-300 bg-white px-3 py-2 font-mono tracking-widest dark:border-slate-700 dark:bg-slate-950"
+          className="mt-1 block w-48 rounded border border-control bg-surface px-3 py-2 font-mono text-2xl tracking-[0.3em]"
         />
-        <p id={`${id}-hint`} className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+        <p id={`${id}-hint`} className="mt-1 text-sm text-graphite">
           {t('access.codeHint')}
         </p>
       </div>

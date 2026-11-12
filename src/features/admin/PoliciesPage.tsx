@@ -84,7 +84,7 @@ export function PoliciesPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <caption className="sr-only">{t('admin.policies.tableCaption')}</caption>
-              <thead className="border-b border-slate-200 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+              <thead className="border-b border-rule text-sm text-graphite">
                 <tr>
                   <th scope="col" className="py-2 pr-4 font-medium">
                     {t('admin.policies.name')}
@@ -105,10 +105,7 @@ export function PoliciesPage() {
               </thead>
               <tbody>
                 {policies.data.items.map((policy) => (
-                  <tr
-                    key={policy.id}
-                    className="border-b border-slate-100 align-top dark:border-slate-900"
-                  >
+                  <tr key={policy.id} className="border-b border-rule align-top">
                     <th scope="row" className="py-3 pr-4 font-medium">
                       <Link to={`/admin/policies/${policy.id}`} className="underline">
                         {policy.name}

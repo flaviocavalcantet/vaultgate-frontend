@@ -14,7 +14,7 @@ import { PAGE_SIZE, useIssueToken, useRevokeToken, useTokens } from './useNodes'
 import { useShowAll } from './useShowAll'
 
 const field =
-  'mt-1 block w-full rounded border border-slate-300 bg-white px-3 py-2 aria-invalid:border-rose-600 dark:border-slate-700 dark:bg-slate-950'
+  'mt-1 block w-full rounded border border-control bg-surface px-3 py-2 aria-invalid:border-seal'
 type Notice = { kind: 'ok' | 'error'; text: string }
 
 /** Single-use enrollment tokens: issue one for a node name, list them, revoke unused ones. */
@@ -47,7 +47,7 @@ export function TokensPage() {
           id={showId}
           value={view.all ? 'all' : 'usable'}
           onChange={(event) => view.set({ all: event.target.value === 'all' })}
-          className="rounded border border-slate-300 bg-white px-2 py-1.5 dark:border-slate-700 dark:bg-slate-950"
+          className="rounded border border-control bg-surface px-2 py-1.5"
         >
           <option value="usable">{t('admin.tokens.usable')}</option>
           <option value="all">{t('admin.tokens.all')}</option>
@@ -55,9 +55,7 @@ export function TokensPage() {
       </div>
       <div aria-live="polite">
         {notice ? (
-          <p
-            className={`mb-4 font-medium ${notice.kind === 'error' ? 'text-rose-700 dark:text-rose-300' : ''}`}
-          >
+          <p className={`mb-4 font-medium ${notice.kind === 'error' ? 'text-seal' : ''}`}>
             {notice.text}
           </p>
         ) : null}
@@ -122,7 +120,7 @@ function IssueToken() {
 
   return (
     <section aria-labelledby={ids('heading')} className="mb-10">
-      <h2 id={ids('heading')} className="mb-3 text-lg font-semibold">
+      <h2 id={ids('heading')} className="mb-3 text-xl font-semibold">
         {t('admin.tokens.issue')}
       </h2>
       <form onSubmit={onSubmit} noValidate className="flex flex-wrap items-start gap-4">
@@ -142,7 +140,7 @@ function IssueToken() {
             onChange={(event) => setName(event.target.value)}
             className={`${field} font-mono text-sm`}
           />
-          <p id={ids('name-hint')} className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+          <p id={ids('name-hint')} className="mt-1 text-sm text-graphite">
             {t('admin.nodeForm.nameHint')}
           </p>
         </div>
@@ -161,7 +159,7 @@ function IssueToken() {
             onChange={(event) => setMinutes(event.target.value)}
             className={field}
           />
-          <p id={ids('minutes-hint')} className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+          <p id={ids('minutes-hint')} className="mt-1 text-sm text-graphite">
             {t('admin.tokens.minutesHint')}
           </p>
         </div>
@@ -171,12 +169,10 @@ function IssueToken() {
       </form>
       <div aria-live="polite" className="mt-4">
         {nameProblem ? (
-          <p className="font-medium text-rose-700 dark:text-rose-300">
-            {t('admin.nodeForm.nameInvalid')}
-          </p>
+          <p className="font-medium text-seal">{t('admin.nodeForm.nameInvalid')}</p>
         ) : null}
         {issue.isError ? (
-          <p className="font-medium text-rose-700 dark:text-rose-300">
+          <p className="font-medium text-seal">
             {t(`admin.tokens.issueFailed.${reasonOf(issue.error)}`)}
           </p>
         ) : null}
@@ -210,7 +206,7 @@ function TokenTable({
     <div className="overflow-x-auto">
       <table className="w-full text-left">
         <caption className="sr-only">{t('admin.tokens.tableCaption')}</caption>
-        <thead className="border-b border-slate-200 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+        <thead className="border-b border-rule text-sm text-graphite">
           <tr>
             <th scope="col" className="py-2 pr-4 font-medium">
               {t('admin.tokens.name')}
@@ -231,10 +227,7 @@ function TokenTable({
         </thead>
         <tbody>
           {tokens.map((token) => (
-            <tr
-              key={token.id}
-              className="border-b border-slate-100 align-top dark:border-slate-900"
-            >
+            <tr key={token.id} className="border-b border-rule align-top">
               <th scope="row" className="py-3 pr-4 font-mono text-sm font-medium">
                 {token.name}
               </th>

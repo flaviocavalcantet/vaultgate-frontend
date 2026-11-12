@@ -20,7 +20,7 @@ export function ErrorPage() {
       <button
         type="button"
         onClick={() => window.location.reload()}
-        className="rounded bg-sky-700 px-4 py-2 text-sm font-medium text-white hover:bg-sky-800"
+        className="rounded bg-accent px-4 py-2 text-sm font-medium text-on-accent hover:bg-accent-strong"
       >
         {t('error.reload')}
       </button>

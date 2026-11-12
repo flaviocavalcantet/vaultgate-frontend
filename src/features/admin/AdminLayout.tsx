@@ -4,9 +4,7 @@ import { NavLink, Outlet } from 'react-router'
 const link = ({ isActive }: { isActive: boolean }) =>
   [
     'block rounded px-3 py-2 text-sm font-medium',
-    isActive
-      ? 'bg-slate-200 text-slate-900 dark:bg-slate-800 dark:text-white'
-      : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-900',
+    isActive ? 'bg-accent-soft text-ink' : 'text-graphite hover:bg-accent-soft',
   ].join(' ')
 
 /** The admin area's frame: its own navigation, then the page. Later steps add sections. */

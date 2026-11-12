@@ -10,7 +10,8 @@ sharing (F3: links for outside recipients and VaultGate users, Shared with me, t
 recipient's page), administration (F4: quarantine, access policies with the
 evaluate tool, users, groups and the audit log) and nodes (F5: enrollment requests,
 nodes, enrollment tokens and TPM registrations), delivered as an image and tested in
-a browser against a real VaultGate (F6).
+a browser against a real VaultGate (F6). Its look (F7, security printing) is in the
+plan's [The look](docs/architecture.md#the-look).
 
 ## Running it
 

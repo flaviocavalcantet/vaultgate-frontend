@@ -65,6 +65,45 @@ dev/            development-only settings (config.k3d.json, for `npm run dev:k3d
 - **Checks before every push:** `npm run check` (types, lint, format, tests, build), the
   same steps CI runs.
 
+## The look
+
+Security printing: the documents made to be verified (banknotes, passports, cheques).
+Ink on tinted security paper, engraved guilloché where trust is established, seals for
+what a scan or a link certifies.
+
+- **Colour** is a set of semantic tokens (`src/index.css`), each with a light and a dark
+  value; components use the tokens (`text-graphite`, `bg-accent`, `text-seal`...), never
+  a palette colour, so dark mode comes with them.
+
+  | Token      | Light     | Dark      | Use                                       |
+  | ---------- | --------- | --------- | ----------------------------------------- |
+  | `paper`    | `#EDF1EC` | `#0E1A26` | the page                                  |
+  | `ink`      | `#1C2B3A` | `#E3EAE3` | text                                      |
+  | `graphite` | `#56636F` | `#9AA7B3` | secondary text                            |
+  | `accent`   | `#2E6A58` | `#7FBFA8` | actions, links, focus, what is certified  |
+  | `seal`     | `#9E2A2B` | `#E58A84` | quarantine, refusals, revoked             |
+  | `ochre`    | `#7A5310` | `#E0B866` | couldn't be decided (unscannable, failed) |
+  | `control`  | `#77847F` | `#667A8C` | the edges of inputs and buttons (3:1)     |
+
+  Text pairs meet WCAG AA (4.5:1 and more); control edges meet 3:1.
+
+- **Type** is Atkinson Hyperlegible Next, and its Mono for hashes, fingerprints, codes
+  and tokens: designed by the Braille Institute so that characters easily confused
+  (0/O, 1/l/I) aren't, which matters where people read codes and fingerprints aloud.
+  Self-hosted (Fontsource), as the CSP allows no other origin. Scale: 14, 16, 20, 28 and
+  40 (a front door's title).
+- **Guilloché** is drawn from geometry as SVG (`components/Guilloche.tsx`): a thin
+  engraved band under the header on every page, and a rosette at the two front doors,
+  signing in and opening a share link (`components/FrontDoor.tsx`).
+- **Seals** (`components/Seal.tsx`) show a state with a mark and its word: filled for
+  certified (clean, an active link), a barred double ring for blocked (quarantined,
+  revoked), a broken ring while deciding, a notched ring when it couldn't be decided.
+  The word carries the meaning; the mark and colour repeat it. A seal is pressed in
+  once when a pending state is decided while the page is open, never on page load.
+- **Restraint:** one bold element (the guilloché); everything else quiet. Left-aligned,
+  hairline rules only in tables (which are ledgers), small radii on controls and larger
+  on panels, no shadows, no gradients. Motion respects reduced motion.
+
 ## Sign-in
 
 - **The flow:** authorization code with PKCE, as a public client (`oidc-client-ts`).
@@ -272,6 +311,9 @@ replace `api/openapi.json` and run `npm run api:types`.
       cluster's HTTPS services from an `https://` origin, as it is deployed. The default
       `npm run dev` stays plain HTTP for compose, whose services are plain HTTP (an HTTPS
       page couldn't call them), on loopback where nothing in between can alter the app.
+- [x] **F7, Design:** a visual identity (security printing): semantic colour tokens
+      with dark mode, Atkinson Hyperlegible, guilloché at the front doors, status seals.
+      See [The look](#the-look).
 
 ## Known limits
 

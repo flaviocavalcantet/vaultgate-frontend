@@ -11,8 +11,8 @@ import { ACTIONS, type Policy } from './types'
 import { useDeletePolicy, usePolicy, useSavePolicy } from './usePolicies'
 
 const field =
-  'mt-1 block w-full max-w-xl rounded border border-slate-300 bg-white px-3 py-2 aria-invalid:border-rose-600 dark:border-slate-700 dark:bg-slate-950'
-const hint = 'mt-1 text-sm text-slate-600 dark:text-slate-300'
+  'mt-1 block w-full max-w-xl rounded border border-control bg-surface px-3 py-2 aria-invalid:border-seal'
+const hint = 'mt-1 text-sm text-graphite'
 const DAYS = [1, 2, 3, 4, 5, 6, 7] as const
 
 /** The list with the item added, or taken out if it was there. */
@@ -186,8 +186,8 @@ function PolicyForm({ policy }: { policy: Policy | null }) {
         {t('admin.policy.enabled')}
       </label>
 
-      <fieldset className="space-y-4 border-t border-slate-200 pt-4 dark:border-slate-800">
-        <legend className="text-lg font-semibold">{t('admin.policy.conditions')}</legend>
+      <fieldset className="space-y-4 border-t border-rule pt-4">
+        <legend className="text-xl font-semibold">{t('admin.policy.conditions')}</legend>
         <p className={hint}>{t('admin.policy.conditionsHint')}</p>
         {(
           [
@@ -284,13 +284,9 @@ function PolicyForm({ policy }: { policy: Policy | null }) {
       </fieldset>
 
       <div aria-live="polite">
-        {problem ? (
-          <p className="mb-2 font-medium text-rose-700 dark:text-rose-300">{problem}</p>
-        ) : null}
+        {problem ? <p className="mb-2 font-medium text-seal">{problem}</p> : null}
         {(save.isSuccess || justCreated) && !save.isError ? (
-          <p className="mb-2 font-medium text-emerald-800 dark:text-emerald-300">
-            {t('admin.policy.saved')}
-          </p>
+          <p className="mb-2 font-medium text-accent">{t('admin.policy.saved')}</p>
         ) : null}
       </div>
       <button type="submit" className={primaryButton} disabled={save.isPending}>
@@ -320,9 +316,7 @@ function DeletePolicy({ policy }: { policy: Policy }) {
       <p className="font-medium">{t('admin.policy.deleteConfirm', { name: policy.name })}</p>
       <div aria-live="polite">
         {remove.isError ? (
-          <p className="font-medium text-rose-700 dark:text-rose-300">
-            {t('admin.policy.deleteFailed')}
-          </p>
+          <p className="font-medium text-seal">{t('admin.policy.deleteFailed')}</p>
         ) : null}
       </div>
       <div className="flex flex-wrap gap-3">
