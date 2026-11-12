@@ -3,7 +3,16 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tansta
 import { useApi } from '@/api/useApi'
 
 import { refusal } from './failures'
-import type { Approval, EnrollmentPage, Node, NodePage } from './types'
+import type {
+  Approval,
+  EnrollmentPage,
+  IssuedToken,
+  Node,
+  NodePage,
+  TokenPage,
+  Tpm,
+  TpmPage,
+} from './types'
 
 export const PAGE_SIZE = 50
 
@@ -99,5 +108,105 @@ export function useRevokeNode(nodeId: string) {
       return data
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: nodesKey }),
+  })
+}
+
+const tokensKey = ['admin', 'tokens'] as const
+const tpmsKey = ['admin', 'tpms'] as const
+
+/** Enrollment tokens: those still usable, or all of them. */
+export function useTokens(all: boolean, page: number) {
+  const api = useApi()
+  return useQuery({
+    queryKey: [...tokensKey, all, page],
+    placeholderData: keepPreviousData,
+    queryFn: async ({ signal }): Promise<TokenPage> => {
+      const { data, response } = await api.GET('/admin/nodes/tokens', {
+        params: {
+          query: { status: all ? 'all' : 'usable', limit: PAGE_SIZE, offset: page * PAGE_SIZE },
+        },
+        signal,
+      })
+      if (!data) throw refusal(response.status)
+      return data
+    },
+  })
+}
+
+/** Issues a single-use token for one node name. The token is in this answer only. */
+export function useIssueToken() {
+  const api = useApi()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (body: {
+      name: string
+      ttl_seconds: number | null
+    }): Promise<IssuedToken> => {
+      const { data, error, response } = await api.POST('/admin/nodes/tokens', { body })
+      if (!data) throw refusal(response.status, error)
+      return data
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: tokensKey }),
+  })
+}
+
+export function useRevokeToken() {
+  const api = useApi()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (tokenId: string) => {
+      const { response } = await api.POST('/admin/nodes/tokens/{token_id}/revoke', {
+        params: { path: { token_id: tokenId } },
+      })
+      if (!response.ok) throw refusal(response.status)
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: tokensKey }),
+  })
+}
+
+/** TPM registrations: those still usable, or all of them. */
+export function useTpms(all: boolean, page: number) {
+  const api = useApi()
+  return useQuery({
+    queryKey: [...tpmsKey, all, page],
+    placeholderData: keepPreviousData,
+    queryFn: async ({ signal }): Promise<TpmPage> => {
+      const { data, response } = await api.GET('/admin/nodes/tpms', {
+        params: {
+          query: { status: all ? 'all' : 'usable', limit: PAGE_SIZE, offset: page * PAGE_SIZE },
+        },
+        signal,
+      })
+      if (!data) throw refusal(response.status)
+      return data
+    },
+  })
+}
+
+/** Registers a TPM, by its endorsement key's fingerprint, to enroll one node name once. */
+export function useRegisterTpm() {
+  const api = useApi()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (body: { name: string; ek_fingerprint: string }): Promise<Tpm> => {
+      const { data, error, response } = await api.POST('/admin/nodes/tpms', { body })
+      if (!data) throw refusal(response.status, error)
+      return data
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: tpmsKey }),
+  })
+}
+
+export function useRevokeTpm() {
+  const api = useApi()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (tpmId: string) => {
+      const { response } = await api.POST('/admin/nodes/tpms/{tpm_id}/revoke', {
+        params: { path: { tpm_id: tpmId } },
+      })
+      if (!response.ok) throw refusal(response.status)
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: tpmsKey }),
   })
 }

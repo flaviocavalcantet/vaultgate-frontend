@@ -7,6 +7,7 @@ import { primaryButton, secondaryButton } from '@/components/styles'
 
 import { reasonOf } from './failures'
 import { Pager } from './Pager'
+import { ShownOnce } from './ShownOnce'
 import type { Approval, Enrollment } from './types'
 import { PAGE_SIZE, useApprove, useEnrollments, useReject } from './useNodes'
 import { useShowAll } from './useShowAll'
@@ -258,45 +259,14 @@ function Decide({
 /** The one-time code, shown once, for the node's operator. */
 function Code({ name, approval }: { name: string; approval: Approval }) {
   const { t, i18n } = useTranslation()
-  const id = useId()
-  const [copy, setCopy] = useState<'idle' | 'copied' | 'failed'>('idle')
   return (
-    <div className="rounded border border-emerald-300 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-950">
-      <p className="mb-2 font-medium">{t('admin.enrollments.approved', { name })}</p>
-      <label htmlFor={id} className="font-medium">
-        {t('admin.enrollments.codeLabel', { name })}
-      </label>
-      <div className="mt-1 flex flex-wrap gap-2">
-        <input
-          id={id}
-          readOnly
-          value={approval.code}
-          onFocus={(event) => event.target.select()}
-          className={`${field} mt-0 max-w-xs`}
-        />
-        <button
-          type="button"
-          className={secondaryButton}
-          onClick={() =>
-            navigator.clipboard.writeText(approval.code).then(
-              () => setCopy('copied'),
-              () => setCopy('failed'),
-            )
-          }
-        >
-          {t('admin.enrollments.copy')}
-        </button>
-      </div>
-      <p className="mt-2 text-sm">
-        {t('admin.enrollments.codeHint', {
-          when: formatDateTime(approval.code_expires_at, i18n.language),
-        })}
-      </p>
-      {copy === 'idle' ? null : (
-        <p className="mt-2 text-sm font-medium">
-          {copy === 'copied' ? t('admin.enrollments.copied') : t('admin.enrollments.copyFailed')}
-        </p>
-      )}
-    </div>
+    <ShownOnce
+      intro={t('admin.enrollments.approved', { name })}
+      label={t('admin.enrollments.codeLabel', { name })}
+      value={approval.code}
+      hint={t('admin.enrollments.codeHint', {
+        when: formatDateTime(approval.code_expires_at, i18n.language),
+      })}
+    />
   )
 }

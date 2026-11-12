@@ -7,9 +7,9 @@ The plan, the stack and the reasons behind them are in
 **[docs/architecture.md](docs/architecture.md)**. So far: the foundation (F0),
 sign-in (F1), files (F2: the list, uploads with progress, scan states, downloads),
 sharing (F3: links for outside recipients and VaultGate users, Shared with me, the
-recipient's page) and administration (F4: quarantine, access policies with the
-evaluate tool, users, groups and the audit log). Nodes (F5) are in progress:
-enrollment requests and nodes so far.
+recipient's page), administration (F4: quarantine, access policies with the
+evaluate tool, users, groups and the audit log) and nodes (F5: enrollment requests,
+nodes, enrollment tokens and TPM registrations). What's left is F6's browser tests.
 
 ## Running it
 

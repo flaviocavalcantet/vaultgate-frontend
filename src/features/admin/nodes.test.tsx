@@ -116,7 +116,7 @@ describe('enrollment requests', () => {
     expect(sent).toEqual({ key_fingerprint: FINGERPRINT })
     expect(within(card).getByText(/it is shown only now/)).toBeVisible()
 
-    await user.click(within(card).getByRole('button', { name: 'Copy code' }))
+    await user.click(within(card).getByRole('button', { name: 'Copy One-time code for edge-1' }))
     expect(await navigator.clipboard.readText()).toBe('K7Q2-M9XD')
     expect(await within(card).findByText('Approved, waiting for the node')).toBeVisible()
   })

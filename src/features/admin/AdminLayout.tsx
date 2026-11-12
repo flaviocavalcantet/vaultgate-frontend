@@ -42,6 +42,16 @@ export function AdminLayout() {
             </NavLink>
           </li>
           <li>
+            <NavLink to="/admin/tokens" className={link}>
+              {t('admin.tokensNav')}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/admin/tpms" className={link}>
+              {t('admin.tpmsNav')}
+            </NavLink>
+          </li>
+          <li>
             <NavLink to="/admin/users" className={link}>
               {t('admin.usersNav')}
             </NavLink>
