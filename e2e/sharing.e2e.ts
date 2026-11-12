@@ -19,8 +19,8 @@ test('an outside recipient opens a share link, confirms the emailed code, and do
   await expect(page.getByRole('heading', { level: 1, name: `Share ${name}` })).toBeVisible()
   await expectAccessible(page, 'the sharing page')
 
-  await page.getByLabel('Recipient’s email address').fill(recipient)
-  await page.getByLabel('Downloads allowed').fill('2')
+  await page.getByLabel('Recipient’s email address', { exact: true }).fill(recipient)
+  await page.getByLabel('Downloads allowed', { exact: true }).fill('2')
   await page.getByRole('button', { name: 'Create link' }).click()
   // A text box: the Revoke button's name ("Revoke the link for …") holds these words too.
   const field = page.getByRole('textbox', { name: `Link for ${recipient}`, exact: true })
@@ -42,7 +42,7 @@ test('an outside recipient opens a share link, confirms the emailed code, and do
   await recipientPage.getByRole('button', { name: 'Email me a code' }).click()
   await expect(recipientPage.getByText(/We sent a code to/)).toBeVisible()
   const code = await codeFor(request, recipient, before)
-  await recipientPage.getByLabel('Code').fill(code)
+  await recipientPage.getByLabel('Code', { exact: true }).fill(code)
   await recipientPage.getByRole('button', { name: 'Continue' }).click()
   await expect(recipientPage.getByText('Confirmed. You can download the file now.')).toBeVisible()
   await expectAccessible(recipientPage, 'the recipient’s page, confirmed')

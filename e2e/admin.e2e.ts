@@ -28,7 +28,7 @@ test('a quarantined file stays blocked until an administrator releases it', asyn
   await expect(admin.getByText('br_cpf: 2 items')).toBeVisible()
   await expectAccessible(admin, 'a file’s scan')
 
-  await admin.getByLabel('Reason').fill(`Released by the browser tests (${run})`)
+  await admin.getByLabel('Reason', { exact: true }).fill(`Released by the browser tests (${run})`)
   await admin.getByRole('button', { name: 'Release', exact: true }).click()
   await expect(admin.getByText('Released: the owner can download it now.')).toBeVisible()
 
@@ -70,8 +70,9 @@ test('every administration page opens and is accessible', async ({ page }) => {
 
   // Check access, as a dry run: the local policy lets every signed-in user download.
   await nav.getByRole('link', { name: 'Check access', exact: true }).click()
-  await page.getByLabel('Groups').fill('/finance')
-  await page.getByLabel('From the address').fill('10.1.2.3')
+  // A text box: the radio "A member of these groups" holds this word too.
+  await page.getByRole('textbox', { name: 'Groups', exact: true }).fill('/finance')
+  await page.getByLabel('From the address', { exact: true }).fill('10.1.2.3')
   await page.getByRole('button', { name: 'Check' }).click()
   await expect(page.getByRole('region', { name: 'Result: Allowed' })).toBeVisible()
 
