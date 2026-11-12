@@ -32,6 +32,16 @@ export function AdminLayout() {
             </NavLink>
           </li>
           <li>
+            <NavLink to="/admin/enrollments" className={link}>
+              {t('admin.enrollmentsNav')}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/admin/nodes" className={link}>
+              {t('admin.nodesNav')}
+            </NavLink>
+          </li>
+          <li>
             <NavLink to="/admin/users" className={link}>
               {t('admin.usersNav')}
             </NavLink>
