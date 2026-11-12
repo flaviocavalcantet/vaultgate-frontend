@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet } from 'react-router'
 
 import { useAuth } from '@/features/auth/useAuth'
+import { useMe } from '@/features/auth/useMe'
 
 const navLink = ({ isActive }: { isActive: boolean }) =>
   [
@@ -15,6 +16,8 @@ const navLink = ({ isActive }: { isActive: boolean }) =>
 export function AppShell() {
   const { t } = useTranslation()
   const { user, signOut } = useAuth()
+  // Shown to administrators only; the API refuses admin requests from anyone else.
+  const isAdmin = useMe().data?.is_admin === true
   return (
     <div className="flex min-h-dvh flex-col">
       <a
@@ -45,6 +48,13 @@ export function AppShell() {
                       {t('nav.shared')}
                     </NavLink>
                   </li>
+                  {isAdmin ? (
+                    <li>
+                      <NavLink to="/admin" className={navLink}>
+                        {t('nav.admin')}
+                      </NavLink>
+                    </li>
+                  ) : null}
                 </>
               ) : null}
             </ul>

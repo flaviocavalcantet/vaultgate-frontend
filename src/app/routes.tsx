@@ -1,7 +1,8 @@
-import type { RouteObject } from 'react-router'
+import { Navigate, type RouteObject } from 'react-router'
 
 import { AppShell } from '@/components/AppShell'
 import { CallbackPage } from '@/features/auth/CallbackPage'
+import { RequireAdmin } from '@/features/auth/RequireAdmin'
 import { RequireAuth } from '@/features/auth/RequireAuth'
 import { CALLBACK_PATH } from '@/features/auth/userManager'
 import { FilesPage } from '@/features/files/FilesPage'
@@ -29,6 +30,33 @@ export const routes: RouteObject[] = [
           { path: 'files', element: <FilesPage /> },
           { path: 'files/:fileId/sharing', element: <ShareFilePage /> },
           { path: 'shared', element: <SharedWithMePage /> },
+          {
+            // For administrators (is_admin on /me), loaded only when opened.
+            path: 'admin',
+            element: <RequireAdmin />,
+            children: [
+              {
+                lazy: async () => ({
+                  Component: (await import('@/features/admin/AdminLayout')).AdminLayout,
+                }),
+                children: [
+                  { index: true, element: <Navigate to="files" replace /> },
+                  {
+                    path: 'files',
+                    lazy: async () => ({
+                      Component: (await import('@/features/admin/AdminFilesPage')).AdminFilesPage,
+                    }),
+                  },
+                  {
+                    path: 'files/:fileId',
+                    lazy: async () => ({
+                      Component: (await import('@/features/admin/AdminFilePage')).AdminFilePage,
+                    }),
+                  },
+                ],
+              },
+            ],
+          },
         ],
       },
       { path: CALLBACK_PATH, element: <CallbackPage /> },
