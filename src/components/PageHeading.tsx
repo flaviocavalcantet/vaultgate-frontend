@@ -1,11 +1,23 @@
 import type { ReactNode } from 'react'
 
-/** A page's one <h1>, with its optional introduction. */
-export function PageHeading({ title, children }: { title: string; children?: ReactNode }) {
+/** A page's one <h1>, with its optional introduction. A front door's title is larger. */
+export function PageHeading({
+  title,
+  children,
+  door = false,
+}: {
+  title: string
+  children?: ReactNode
+  door?: boolean
+}) {
   return (
     <div className="mb-6">
-      <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-      {children ? <p className="mt-2 text-slate-600 dark:text-slate-300">{children}</p> : null}
+      <h1
+        className={`leading-tight font-bold tracking-tight ${door ? 'text-[2rem] md:text-[2.5rem]' : 'text-[1.75rem]'}`}
+      >
+        {title}
+      </h1>
+      {children ? <p className="mt-2 max-w-prose text-graphite">{children}</p> : null}
     </div>
   )
 }

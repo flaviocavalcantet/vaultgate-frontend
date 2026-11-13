@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router'
 
 import { formatDateTime } from '@/components/format'
 import { PageHeading } from '@/components/PageHeading'
+import { Seal, type SealTone } from '@/components/Seal'
 import { primaryButton, secondaryButton } from '@/components/styles'
 
 import { reasonOf } from './failures'
@@ -16,8 +17,15 @@ import {
 } from './useShares'
 import type { ShareCreate, ShareOut } from './types'
 
-const field =
-  'mt-1 block w-full max-w-md rounded border border-slate-300 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-950'
+/** A link's state, sealed: only an active link certifies anything. */
+const SEALS = {
+  active: 'certified',
+  used: 'neutral',
+  expired: 'neutral',
+  revoked: 'blocked',
+} as const satisfies Record<ShareOut['state'], SealTone>
+
+const field = 'mt-1 block w-full max-w-md rounded border border-control bg-surface px-3 py-2'
 
 /** A number field's value for the API: empty means the API's default. */
 function optionalCount(value: string): number | null {
@@ -101,7 +109,7 @@ function NewLink({ fileId }: { fileId: string }) {
 
   return (
     <section aria-labelledby={`${ids.email}-heading`} className="mb-10">
-      <h2 id={`${ids.email}-heading`} className="mb-3 text-lg font-semibold">
+      <h2 id={`${ids.email}-heading`} className="mb-3 text-xl font-semibold">
         {t('sharing.create')}
       </h2>
       <form onSubmit={onSubmit} className="space-y-4">
@@ -134,9 +142,7 @@ function NewLink({ fileId }: { fileId: string }) {
               />
               <span>
                 {t(`sharing.${value}`)}
-                <span className="block text-sm text-slate-600 dark:text-slate-300">
-                  {t(`sharing.${value}Hint`)}
-                </span>
+                <span className="block text-sm text-graphite">{t(`sharing.${value}Hint`)}</span>
               </span>
             </label>
           ))}
@@ -175,7 +181,7 @@ function NewLink({ fileId }: { fileId: string }) {
             />
           </div>
         </div>
-        <p id={ids.hint} className="text-sm text-slate-600 dark:text-slate-300">
+        <p id={ids.hint} className="text-sm text-graphite">
           {t('sharing.defaultHint')}
         </p>
         <button type="submit" className={primaryButton} disabled={create.isPending}>
@@ -184,7 +190,7 @@ function NewLink({ fileId }: { fileId: string }) {
       </form>
       <div aria-live="polite" className="mt-4">
         {create.isError ? (
-          <p className="font-medium text-rose-700 dark:text-rose-300">
+          <p className="font-medium text-seal">
             {t(`sharing.createFailed.${reasonOf(create.error)}`)}
           </p>
         ) : null}
@@ -209,7 +215,7 @@ function CreatedLink({ created }: { created: NewShare }) {
   }
 
   return (
-    <div className="rounded border border-emerald-300 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-950">
+    <div className="rounded-lg border border-accent bg-accent-soft p-4">
       <label htmlFor={id} className="font-medium">
         {t('sharing.created', { email })}
       </label>
@@ -257,13 +263,13 @@ function Links({ fileId, name }: { fileId: string; name: string }) {
 
   return (
     <section aria-labelledby={headingId}>
-      <h2 id={headingId} className="mb-3 text-lg font-semibold">
+      <h2 id={headingId} className="mb-3 text-xl font-semibold">
         {t('sharing.list')}
       </h2>
       <div aria-live="polite">
         {notice ? (
           <p
-            className={`mb-4 font-medium ${notice.kind === 'error' ? 'text-rose-700 dark:text-rose-300' : 'text-emerald-800 dark:text-emerald-300'}`}
+            className={`mb-4 font-medium ${notice.kind === 'error' ? 'text-seal' : 'text-accent'}`}
           >
             {notice.text}
           </p>
@@ -276,7 +282,7 @@ function Links({ fileId, name }: { fileId: string; name: string }) {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <caption className="sr-only">{t('sharing.listCaption', { name })}</caption>
-            <thead className="border-b border-slate-200 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+            <thead className="border-b border-rule text-sm text-graphite">
               <tr>
                 <th scope="col" className="py-2 pr-4 font-medium">
                   {t('sharing.recipient')}
@@ -300,7 +306,7 @@ function Links({ fileId, name }: { fileId: string; name: string }) {
             </thead>
             <tbody>
               {shares.data.map((share) => (
-                <tr key={share.id} className="border-b border-slate-100 dark:border-slate-900">
+                <tr key={share.id} className="border-b border-rule">
                   <th scope="row" className="max-w-xs truncate py-3 pr-4 font-medium">
                     {share.recipient_email}
                   </th>
@@ -309,7 +315,9 @@ function Links({ fileId, name }: { fileId: string; name: string }) {
                       ? t('sharing.whoInternal')
                       : t('sharing.whoExternal')}
                   </td>
-                  <td className="py-3 pr-4">{t(`sharing.states.${share.state}`)}</td>
+                  <td className="py-3 pr-4">
+                    <Seal tone={SEALS[share.state]} label={t(`sharing.states.${share.state}`)} />
+                  </td>
                   <td className="py-3 pr-4 whitespace-nowrap">
                     {formatDateTime(share.expires_at, i18n.language)}
                   </td>

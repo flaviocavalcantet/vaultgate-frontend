@@ -13,7 +13,7 @@ import { PAGE_SIZE, useApprove, useEnrollments, useReject } from './useNodes'
 import { useShowAll } from './useShowAll'
 
 const field =
-  'mt-1 block w-full max-w-xl rounded border border-slate-300 bg-white px-3 py-2 font-mono text-sm dark:border-slate-700 dark:bg-slate-950'
+  'mt-1 block w-full max-w-xl rounded border border-control bg-surface px-3 py-2 font-mono text-sm'
 
 /** Machines asking for a node certificate, approved by fingerprint, or rejected. */
 export function EnrollmentsPage() {
@@ -35,7 +35,7 @@ export function EnrollmentsPage() {
           id={showId}
           value={view.all ? 'all' : 'waiting'}
           onChange={(event) => view.set({ all: event.target.value === 'all' })}
-          className="rounded border border-slate-300 bg-white px-2 py-1.5 dark:border-slate-700 dark:bg-slate-950"
+          className="rounded border border-control bg-surface px-2 py-1.5"
         >
           <option value="waiting">{t('admin.enrollments.waiting')}</option>
           <option value="all">{t('admin.enrollments.all')}</option>
@@ -91,13 +91,10 @@ function Request({ request, onRejected }: { request: Enrollment; onRejected: () 
   const showFingerprint = request.status !== 'pending'
 
   return (
-    <article
-      aria-labelledby={headingId}
-      className="rounded border border-slate-200 p-4 dark:border-slate-800"
-    >
-      <h2 id={headingId} className="mb-2 text-lg font-semibold">
+    <article aria-labelledby={headingId} className="rounded-lg border border-rule p-4">
+      <h2 id={headingId} className="mb-2 text-xl font-semibold">
         {request.name}{' '}
-        <span className="text-base font-normal text-slate-600 dark:text-slate-300">
+        <span className="text-base font-normal text-graphite">
           {t(`admin.enrollments.states.${request.status}`)}
         </span>
       </h2>
@@ -177,13 +174,13 @@ function Decide({
             onChange={(event) => setFingerprint(event.target.value)}
             className={field}
           />
-          <p id={`${id}-hint`} className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+          <p id={`${id}-hint`} className="mt-1 text-sm text-graphite">
             {t('admin.enrollments.confirmHint')}
           </p>
         </div>
         <div aria-live="polite">
           {approve.isError ? (
-            <p className="font-medium text-rose-700 dark:text-rose-300">
+            <p className="font-medium text-seal">
               {t(`admin.enrollments.approveFailed.${reasonOf(approve.error)}`)}
             </p>
           ) : null}
@@ -213,7 +210,7 @@ function Decide({
         </p>
         <div aria-live="polite">
           {reject.isError ? (
-            <p className="mb-3 font-medium text-rose-700 dark:text-rose-300">
+            <p className="mb-3 font-medium text-seal">
               {t('admin.enrollments.rejectFailed', { name: request.name })}
             </p>
           ) : null}

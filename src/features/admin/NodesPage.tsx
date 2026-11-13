@@ -33,7 +33,7 @@ export function NodesPage() {
           id={showId}
           value={view.all ? 'all' : 'active'}
           onChange={(event) => view.set({ all: event.target.value === 'all' })}
-          className="rounded border border-slate-300 bg-white px-2 py-1.5 dark:border-slate-700 dark:bg-slate-950"
+          className="rounded border border-control bg-surface px-2 py-1.5"
         >
           <option value="active">{t('admin.nodes.active')}</option>
           <option value="all">{t('admin.nodes.all')}</option>
@@ -41,9 +41,7 @@ export function NodesPage() {
       </div>
       <div aria-live="polite">
         {notice ? (
-          <p
-            className={`mb-4 font-medium ${notice.kind === 'error' ? 'text-rose-700 dark:text-rose-300' : ''}`}
-          >
+          <p className={`mb-4 font-medium ${notice.kind === 'error' ? 'text-seal' : ''}`}>
             {notice.text}
           </p>
         ) : null}
@@ -63,7 +61,7 @@ export function NodesPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <caption className="sr-only">{t('admin.nodes.tableCaption')}</caption>
-              <thead className="border-b border-slate-200 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+              <thead className="border-b border-rule text-sm text-graphite">
                 <tr>
                   <th scope="col" className="py-2 pr-4 font-medium">
                     {t('admin.nodes.name')}
@@ -123,7 +121,7 @@ function Row({ node, onNotice }: { node: Node; onNotice: (notice: Notice) => voi
   }
 
   return (
-    <tr className="border-b border-slate-100 align-top dark:border-slate-900">
+    <tr className="border-b border-rule align-top">
       <th scope="row" className="py-3 pr-4 font-medium">
         {node.name}
         <span className="block font-mono text-xs font-normal break-all">{node.identity}</span>

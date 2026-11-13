@@ -36,7 +36,7 @@ export function UsersPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <caption className="sr-only">{t('admin.users.tableCaption')}</caption>
-              <thead className="border-b border-slate-200 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+              <thead className="border-b border-rule text-sm text-graphite">
                 <tr>
                   <th scope="col" className={th}>
                     {t('admin.users.name')}
@@ -60,10 +60,7 @@ export function UsersPage() {
               </thead>
               <tbody>
                 {users.data.items.map((user) => (
-                  <tr
-                    key={user.id}
-                    className="border-b border-slate-100 align-top dark:border-slate-900"
-                  >
+                  <tr key={user.id} className="border-b border-rule align-top">
                     <th scope="row" className="py-3 pr-4 font-medium">
                       <Link to={`/admin/users/${user.id}`} className="underline">
                         {user.name ?? user.username ?? user.subject}

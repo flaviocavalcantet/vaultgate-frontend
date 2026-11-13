@@ -52,7 +52,7 @@ export function AdminFilesPage() {
               verdict: event.target.value === 'all' ? null : (event.target.value as VerdictName),
             })
           }
-          className="rounded border border-slate-300 bg-white px-2 py-1.5 dark:border-slate-700 dark:bg-slate-950"
+          className="rounded border border-control bg-surface px-2 py-1.5"
         >
           <option value="all">{t('admin.files.all')}</option>
           {VERDICTS.map((verdict) => (
@@ -79,7 +79,7 @@ export function AdminFilesPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <caption className="sr-only">{t('admin.files.tableCaption')}</caption>
-              <thead className="border-b border-slate-200 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+              <thead className="border-b border-rule text-sm text-graphite">
                 <tr>
                   <th scope="col" className="py-2 pr-4 font-medium">
                     {t('admin.files.name')}
@@ -100,7 +100,7 @@ export function AdminFilesPage() {
               </thead>
               <tbody>
                 {files.data.items.map((file) => (
-                  <tr key={file.id} className="border-b border-slate-100 dark:border-slate-900">
+                  <tr key={file.id} className="border-b border-rule">
                     <th scope="row" className="max-w-xs truncate py-3 pr-4 font-medium">
                       <Link to={`/admin/files/${file.id}`} className="underline">
                         {file.name}

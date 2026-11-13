@@ -13,7 +13,7 @@ import { PAGE_SIZE, useRegisterTpm, useRevokeTpm, useTpms } from './useNodes'
 import { useShowAll } from './useShowAll'
 
 const field =
-  'mt-1 block w-full rounded border border-slate-300 bg-white px-3 py-2 font-mono text-sm aria-invalid:border-rose-600 dark:border-slate-700 dark:bg-slate-950'
+  'mt-1 block w-full rounded border border-control bg-surface px-3 py-2 font-mono text-sm aria-invalid:border-seal'
 type Notice = { kind: 'ok' | 'error'; text: string }
 
 /** TPMs registered, by endorsement key, to enroll one node each by attestation. */
@@ -46,7 +46,7 @@ export function TpmsPage() {
           id={showId}
           value={view.all ? 'all' : 'usable'}
           onChange={(event) => view.set({ all: event.target.value === 'all' })}
-          className="rounded border border-slate-300 bg-white px-2 py-1.5 dark:border-slate-700 dark:bg-slate-950"
+          className="rounded border border-control bg-surface px-2 py-1.5"
         >
           <option value="usable">{t('admin.tpms.usable')}</option>
           <option value="all">{t('admin.tpms.all')}</option>
@@ -54,9 +54,7 @@ export function TpmsPage() {
       </div>
       <div aria-live="polite">
         {notice ? (
-          <p
-            className={`mb-4 font-medium ${notice.kind === 'error' ? 'text-rose-700 dark:text-rose-300' : ''}`}
-          >
+          <p className={`mb-4 font-medium ${notice.kind === 'error' ? 'text-seal' : ''}`}>
             {notice.text}
           </p>
         ) : null}
@@ -78,7 +76,7 @@ export function TpmsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <caption className="sr-only">{t('admin.tpms.tableCaption')}</caption>
-              <thead className="border-b border-slate-200 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+              <thead className="border-b border-rule text-sm text-graphite">
                 <tr>
                   <th scope="col" className="py-2 pr-4 font-medium">
                     {t('admin.tpms.name')}
@@ -99,10 +97,7 @@ export function TpmsPage() {
               </thead>
               <tbody>
                 {tpms.data.items.map((tpm) => (
-                  <tr
-                    key={tpm.id}
-                    className="border-b border-slate-100 align-top dark:border-slate-900"
-                  >
+                  <tr key={tpm.id} className="border-b border-rule align-top">
                     <th scope="row" className="py-3 pr-4 font-mono text-sm font-medium">
                       {tpm.name}
                     </th>
@@ -180,7 +175,7 @@ function RegisterTpm() {
 
   return (
     <section aria-labelledby={ids('heading')} className="mb-10">
-      <h2 id={ids('heading')} className="mb-3 text-lg font-semibold">
+      <h2 id={ids('heading')} className="mb-3 text-xl font-semibold">
         {t('admin.tpms.register')}
       </h2>
       <form onSubmit={onSubmit} noValidate className="space-y-4">
@@ -200,7 +195,7 @@ function RegisterTpm() {
             onChange={(event) => setName(event.target.value)}
             className={field}
           />
-          <p id={ids('name-hint')} className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+          <p id={ids('name-hint')} className="mt-1 text-sm text-graphite">
             {t('admin.nodeForm.nameHint')}
           </p>
         </div>
@@ -219,7 +214,7 @@ function RegisterTpm() {
             onChange={(event) => setEk(event.target.value)}
             className={field}
           />
-          <p id={ids('ek-hint')} className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+          <p id={ids('ek-hint')} className="mt-1 text-sm text-graphite">
             {t('admin.tpms.ekHint')}
           </p>
         </div>
@@ -229,22 +224,16 @@ function RegisterTpm() {
       </form>
       <div aria-live="polite" className="mt-4 space-y-1">
         {problems.name ? (
-          <p className="font-medium text-rose-700 dark:text-rose-300">
-            {t('admin.nodeForm.nameInvalid')}
-          </p>
+          <p className="font-medium text-seal">{t('admin.nodeForm.nameInvalid')}</p>
         ) : null}
-        {problems.ek ? (
-          <p className="font-medium text-rose-700 dark:text-rose-300">
-            {t('admin.tpms.ekInvalid')}
-          </p>
-        ) : null}
+        {problems.ek ? <p className="font-medium text-seal">{t('admin.tpms.ekInvalid')}</p> : null}
         {register.isError ? (
-          <p className="font-medium text-rose-700 dark:text-rose-300">
+          <p className="font-medium text-seal">
             {t(`admin.tpms.registerFailed.${reasonOf(register.error)}`)}
           </p>
         ) : null}
         {registered ? (
-          <p className="font-medium text-emerald-800 dark:text-emerald-300">
+          <p className="font-medium text-accent">
             {t('admin.tpms.registered', {
               name: registered.name,
               when: formatDateTime(registered.expires_at, i18n.language),

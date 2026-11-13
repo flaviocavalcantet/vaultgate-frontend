@@ -11,8 +11,7 @@ import type { AdminFile, Purpose } from './types'
 import { useAdminFile, useRelease, useRescan } from './useQuarantine'
 import { Verdict } from './Verdict'
 
-const field =
-  'mt-1 block w-full max-w-xl rounded border border-slate-300 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-950'
+const field = 'mt-1 block w-full max-w-xl rounded border border-control bg-surface px-3 py-2'
 
 /** One file's scan, and what an administrator can do about it: release, or scan again. */
 export function AdminFilePage() {
@@ -67,7 +66,7 @@ function Details({ file }: { file: AdminFile }) {
   ].filter((part) => part !== null)
   return (
     <section aria-labelledby="details" className="mb-10">
-      <h2 id="details" className="mb-3 text-lg font-semibold">
+      <h2 id="details" className="mb-3 text-xl font-semibold">
         {t('admin.file.details')}
       </h2>
       <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2">
@@ -108,9 +107,7 @@ function Details({ file }: { file: AdminFile }) {
                   </li>
                 ))}
               </ul>
-              <p className="text-sm text-slate-600 dark:text-slate-300">
-                {t('admin.file.findingsNote')}
-              </p>
+              <p className="text-sm text-graphite">{t('admin.file.findingsNote')}</p>
             </>
           ) : (
             t('admin.file.noFindings')
@@ -170,20 +167,16 @@ function Release({ file }: { file: AdminFile }) {
 
   return (
     <section aria-labelledby={ids.heading} className="mb-10">
-      <h2 id={ids.heading} className="mb-2 text-lg font-semibold">
+      <h2 id={ids.heading} className="mb-2 text-xl font-semibold">
         {t('admin.file.release')}
       </h2>
-      <p className="mb-4 max-w-2xl text-slate-600 dark:text-slate-300">
-        {t('admin.file.releaseIntro')}
-      </p>
+      <p className="mb-4 max-w-2xl text-graphite">{t('admin.file.releaseIntro')}</p>
       <div aria-live="polite" className="mb-4">
         {done ? (
-          <p className="font-medium text-emerald-800 dark:text-emerald-300">
-            {t(`admin.file.released.${done}`)}
-          </p>
+          <p className="font-medium text-accent">{t(`admin.file.released.${done}`)}</p>
         ) : null}
         {release.isError ? (
-          <p className="font-medium text-rose-700 dark:text-rose-300">
+          <p className="font-medium text-seal">
             {t(`admin.file.releaseFailed.${reasonOf(release.error)}`)}
           </p>
         ) : null}
@@ -219,7 +212,7 @@ function Release({ file }: { file: AdminFile }) {
               onChange={(event) => setReason(event.target.value)}
               className={field}
             />
-            <p id={ids.hint} className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+            <p id={ids.hint} className="mt-1 text-sm text-graphite">
               {t('admin.file.releaseReasonHint')}
             </p>
           </div>
@@ -249,20 +242,16 @@ function Rescan({ file }: { file: AdminFile }) {
 
   return (
     <section aria-labelledby={headingId}>
-      <h2 id={headingId} className="mb-2 text-lg font-semibold">
+      <h2 id={headingId} className="mb-2 text-xl font-semibold">
         {t('admin.file.rescan')}
       </h2>
-      <p className="mb-4 max-w-2xl text-slate-600 dark:text-slate-300">
-        {t('admin.file.rescanIntro')}
-      </p>
+      <p className="mb-4 max-w-2xl text-graphite">{t('admin.file.rescanIntro')}</p>
       <div aria-live="polite" className="mb-4">
         {rescan.isSuccess ? (
-          <p className="font-medium text-emerald-800 dark:text-emerald-300">
-            {t('admin.file.rescanned')}
-          </p>
+          <p className="font-medium text-accent">{t('admin.file.rescanned')}</p>
         ) : null}
         {rescan.isError ? (
-          <p className="font-medium text-rose-700 dark:text-rose-300">
+          <p className="font-medium text-seal">
             {t(`admin.file.rescanFailed.${reasonOf(rescan.error)}`)}
           </p>
         ) : null}

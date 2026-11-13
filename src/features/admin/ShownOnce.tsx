@@ -22,7 +22,7 @@ export function ShownOnce({
   const id = useId()
   const [copy, setCopy] = useState<'idle' | 'copied' | 'failed'>('idle')
   return (
-    <div className="rounded border border-emerald-300 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-950">
+    <div className="rounded-lg border border-accent bg-accent-soft p-4">
       <p className="mb-2 font-medium">{intro}</p>
       <label htmlFor={id} className="font-medium">
         {label}
@@ -33,7 +33,7 @@ export function ShownOnce({
           readOnly
           value={value}
           onFocus={(event) => event.target.select()}
-          className="block w-full max-w-xl rounded border border-slate-300 bg-white px-3 py-2 font-mono text-sm dark:border-slate-700 dark:bg-slate-950"
+          className="block w-full max-w-xl rounded border border-control bg-surface px-3 py-2 font-mono text-sm"
         />
         <button
           type="button"

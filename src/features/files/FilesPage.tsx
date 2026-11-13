@@ -61,7 +61,7 @@ export function FilesPage() {
       <div aria-live="polite">
         {notice ? (
           <p
-            className={`mb-4 font-medium ${notice.kind === 'error' ? 'text-rose-700 dark:text-rose-300' : 'text-emerald-800 dark:text-emerald-300'}`}
+            className={`mb-4 font-medium ${notice.kind === 'error' ? 'text-seal' : 'text-accent'}`}
           >
             {notice.text}
           </p>
@@ -85,7 +85,7 @@ export function FilesPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <caption className="sr-only">{t('files.tableCaption')}</caption>
-              <thead className="border-b border-slate-200 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+              <thead className="border-b border-rule text-sm text-graphite">
                 <tr>
                   <th scope="col" className="py-2 pr-4 font-medium">
                     {t('files.name')}
@@ -106,7 +106,7 @@ export function FilesPage() {
               </thead>
               <tbody>
                 {files.data.items.map((file) => (
-                  <tr key={file.id} className="border-b border-slate-100 dark:border-slate-900">
+                  <tr key={file.id} className="border-b border-rule">
                     <th scope="row" className="max-w-xs truncate py-3 pr-4 font-medium">
                       {file.name}
                     </th>
