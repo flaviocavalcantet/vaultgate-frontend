@@ -280,7 +280,10 @@ replace `api/openapi.json` and run `npm run api:types`.
 - **What they cover:** signing in, and that no token is stored outside memory (a page
   load starts signed out); an upload, its scan and its download; a share link opened by
   an outside recipient with no account, the emailed code read from Mailpit, the
-  download, the link revoked; a quarantined file blocked, released by an administrator,
+  download, the link revoked; folders (made, a name clash refused, uploaded into,
+  renamed, moved through by browsing, deleted with what they hold after their contents
+  are shown and their name typed); a folder link browsed into and downloaded from by an
+  outside recipient, nothing named before the code; a quarantined file blocked, released by an administrator,
   then downloaded; a user who isn't an administrator kept out; every administration
   page; Check access as a dry run; the audit log's chain.
 - **Accessibility:** axe checks every page they open for WCAG 2.1 A and AA violations;
@@ -344,7 +347,7 @@ replace `api/openapi.json` and run `npm run api:types`.
 - [x] **F7, Design:** a visual identity (security printing): semantic colour tokens
       with dark mode, Atkinson Hyperlegible, guilloché at the front doors, status seals.
       See [The look](#the-look).
-- [ ] **F8, Folders** (vaultgate's M12.6): folders and their breadcrumbs; new folder,
+- [x] **F8, Folders** (vaultgate's M12.6): folders and their breadcrumbs; new folder,
       rename, move, delete (a folder with everything in it, its contents shown and its
       name typed first); sharing a folder, and browsing one shared with you, as a
       VaultGate user or from a link; browser tests. See [Folders](#folders).
