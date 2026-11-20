@@ -81,6 +81,7 @@ export const en = {
     moveName: 'Move {{name}}',
     deleteAction: 'Delete',
     deleteName: 'Delete {{name}}',
+    shareName: 'Share {{name}}',
     cancel: 'Cancel',
     loading: 'Loading the folder…',
     missing: 'This folder doesn’t exist, or isn’t yours.',
@@ -138,6 +139,12 @@ export const en = {
   sharing: {
     title: 'Share {{name}}',
     titleLoading: 'Share a file',
+    titleFolder: 'Share the folder {{name}}',
+    titleFolderLoading: 'Share a folder',
+    folderNote:
+      'A link to a folder shares everything in it, at every level, as it is when the recipient looks: files you add later too, and not what you move out. They see only the files that are ready to download, and the link’s downloads count across all of them.',
+    backTo: 'Back to {{name}}',
+    itsFolder: 'its folder',
     intro:
       'Each link is for one person, named by email address. It ends when it expires, when its downloads are used up, or when you revoke it.',
     back: 'Back to your files',
@@ -145,6 +152,8 @@ export const en = {
     failed: {
       notFound: 'This file doesn’t exist, or isn’t yours.',
       unknown: 'The file could not be loaded. Try again in a moment.',
+      notFoundFolder: 'This folder doesn’t exist, or isn’t yours.',
+      unknownFolder: 'The folder could not be loaded. Try again in a moment.',
     },
     notShareable:
       'This file can’t be shared right now: its scan doesn’t allow it. You can still revoke its links.',
@@ -204,8 +213,11 @@ export const en = {
   shared: {
     title: 'Shared with me',
     intro:
-      'Files other VaultGate users shared with your email address. Each link allows a few downloads, for a while.',
-    tableCaption: 'Files shared with you',
+      'Files and folders other VaultGate users shared with your email address. Each link allows a few downloads, for a while.',
+    tableCaption: 'Files and folders shared with you',
+    folder: 'Folder',
+    open: 'Open',
+    openName: 'Open {{name}}',
     loading: 'Loading…',
     failed: 'The files shared with you could not be loaded. Try again in a moment.',
     retry: 'Try again',
@@ -232,8 +244,35 @@ export const en = {
       unknown: 'The download of {{name}} could not start. Try again.',
     },
   },
+  sharedFolder: {
+    titleLoading: 'A shared folder',
+    loading: 'Loading the folder…',
+    back: 'Back to Shared with me',
+    details_one:
+      'Shared by {{sharer}}. Works until {{expires}}, for {{count}} more download from anything in it.',
+    details_other:
+      'Shared by {{sharer}}. Works until {{expires}}, for {{count}} more downloads from anything in it.',
+    gone: 'This folder is no longer shared with you.',
+    failed: 'The folder could not be loaded. Try again in a moment.',
+    path: 'Shared folder path',
+    onlyReady:
+      'Only files that are ready to download are listed. Files still being scanned, or held after a scan, are left out.',
+    empty: 'Nothing here can be downloaded right now.',
+    caption: 'Contents of {{name}}',
+    name: 'Name',
+    size: 'Size',
+    actions: 'Actions',
+    folder: 'Folder',
+    openAction: 'Open',
+    open: 'Open folder {{name}}',
+    download: 'Download',
+    downloadName: 'Download {{name}}',
+    truncated: 'This folder holds more than can be listed here; not everything is shown.',
+  },
   access: {
     title: 'A file shared with you',
+    titleFolder: 'A folder shared with you',
+    loadingFolder: 'Opening the folder…',
     loading: 'Opening the link…',
     noToken: 'This link is incomplete. Open it again from the message it came in.',
     failed: {
@@ -250,6 +289,8 @@ export const en = {
     details_other: 'For {{hint}}. Works until {{expires}}, for {{count}} more downloads.',
     internal:
       'This file was shared with a VaultGate user. Sign in with that address, then open Shared with me.',
+    internalFolder:
+      'This folder was shared with a VaultGate user. Sign in with that address, then open Shared with me.',
     openShared: 'Go to Shared with me',
     prove: 'To download it, confirm you can read mail at that address: we send it a code.',
     sendCode: 'Email me a code',
@@ -274,6 +315,7 @@ export const en = {
       unknown: 'Something went wrong. Try again in a moment.',
     },
     verified: 'Confirmed. You can download the file now.',
+    verifiedFolder: 'Confirmed. You can open the folder and download its files now.',
     download: 'Download the file',
     started: 'Your download has started.',
     expired: 'Your confirmation ended. Ask for a new code to continue.',

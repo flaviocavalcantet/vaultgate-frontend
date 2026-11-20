@@ -195,10 +195,21 @@ replace `api/openapi.json` and run `npm run api:types`.
   owner's. The token and the grant live in memory only: a reload starts over, with "I
   already have a code" for a code still valid. A link for a VaultGate user sends them
   to sign in and to Shared with me.
-- **Shared with me** (`/shared`) lists the files other users shared with the signed-in
-  user's verified address, with the sharer, the expiry and the downloads left, and
+- **Shared with me** (`/shared`) lists the files and folders other users shared with the
+  signed-in user's verified address, with the sharer, the expiry and the downloads left, and
   downloads them the same way. A file whose scan doesn't allow it right now is listed
   without a download.
+- **A folder** is shared the same way, from `/files/in/<id>/sharing` (a folder row's
+  Share), with no scan to wait for: the page says the link shares everything in the
+  folder, at every level, as it is when the recipient looks, and that its downloads
+  count across all of it (vaultgate ADR 0020).
+- **A shared folder is browsed** in the page: the way back up to the shared folder
+  (never above it), its folders, and the files that can be downloaded now, each with
+  Download. Files being scanned or held aren't listed, and the page says so. A
+  VaultGate user opens one from Shared with me (`/shared/<share>`); an outside
+  recipient, once their code is confirmed, on the link's page, which then reads "A
+  folder shared with you". Moving between folders stays in memory, like the
+  recipient's grant. A grant that ends while browsing asks for a new code in place.
 - **Shared code:** the download hand-off, the formatters and the button styles live in
   `components/`, used by both the files and the sharing features.
 

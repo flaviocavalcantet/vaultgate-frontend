@@ -9,8 +9,15 @@ import { primaryButton, secondaryButton } from '@/components/styles'
 
 import { type Failure, reasonOf } from './failures'
 import { tokenFromHash } from './link'
-import type { Grant, ShareAccess } from './types'
-import { useSendCode, useShareAccess, useShareDownload, useVerifyCode } from './useShareAccess'
+import { SharedFolder } from './SharedFolder'
+import type { Grant, ShareAccess, SharedFileItem } from './types'
+import {
+  useAccessContents,
+  useSendCode,
+  useShareAccess,
+  useShareDownload,
+  useVerifyCode,
+} from './useShareAccess'
 
 const CODE = /^[0-9]{6}$/
 
@@ -38,7 +45,10 @@ export function ShareAccessPage() {
 
   return (
     <FrontDoor>
-      <PageHeading door title={t('access.title')} />
+      <PageHeading
+        door
+        title={access.data?.kind === 'folder' ? t('access.titleFolder') : t('access.title')}
+      />
       {body}
     </FrontDoor>
   )
@@ -59,7 +69,9 @@ function Recipient({ token, access }: { token: string; access: ShareAccess }) {
     return (
       <>
         {details}
-        <p className="mb-4">{t('access.internal')}</p>
+        <p className="mb-4">
+          {access.kind === 'folder' ? t('access.internalFolder') : t('access.internal')}
+        </p>
         <Link to="/shared" className={primaryButton}>
           {t('access.openShared')}
         </Link>
@@ -69,7 +81,7 @@ function Recipient({ token, access }: { token: string; access: ShareAccess }) {
   return (
     <>
       {details}
-      <External token={token} />
+      <External token={token} kind={access.kind} />
     </>
   )
 }
@@ -77,8 +89,11 @@ function Recipient({ token, access }: { token: string; access: ShareAccess }) {
 type Step =
   { name: 'start' } | { name: 'code'; sentTo: string | null } | { name: 'ready'; grant: Grant }
 
-/** An outside recipient's steps: a code to their address, the code, then downloads. */
-function External({ token }: { token: string }) {
+/**
+ * An outside recipient's steps: a code to their address, the code, then downloads (for
+ * a folder, browsing it first).
+ */
+function External({ token, kind }: { token: string; kind: ShareAccess['kind'] }) {
   const { t } = useTranslation()
   const [step, setStep] = useState<Step>({ name: 'start' })
   const [problem, setProblem] = useState<string | null>(null)
@@ -106,22 +121,27 @@ function External({ token }: { token: string }) {
     })
   }
 
-  const onDownload = (grant: Grant) => {
+  // The grant ended (it lasts minutes): a new code gets a new one.
+  const expired = () => {
+    setStep({ name: 'start' })
+    setStarted(false)
+    setProblem(t('access.expired'))
+  }
+
+  const onDownload = (grant: Grant, file?: SharedFileItem) => {
     setProblem(null)
     setStarted(false)
-    download.mutate(grant.grant, {
-      onSuccess: () => setStarted(true),
-      onError: (error) => {
-        const reason = reasonOf(error)
-        if (reason === 'denied') {
-          // The grant ended (it lasts minutes): a new code gets a new one.
-          setStep({ name: 'start' })
-          setProblem(t('access.expired'))
-        } else {
-          fail('failed', reason)
-        }
+    download.mutate(
+      { grant: grant.grant, ...(file ? { fileId: file.id } : {}) },
+      {
+        onSuccess: () => setStarted(true),
+        onError: (error) => {
+          const reason = reasonOf(error)
+          if (reason === 'denied') expired()
+          else fail('failed', reason)
+        },
       },
-    })
+    )
   }
 
   return (
@@ -131,7 +151,11 @@ function External({ token }: { token: string }) {
         {step.name === 'code' ? (
           <p>{step.sentTo ? t('access.sent', { to: step.sentTo }) : t('access.sentNoAddress')}</p>
         ) : null}
-        {step.name === 'ready' ? <p className="font-medium">{t('access.verified')}</p> : null}
+        {step.name === 'ready' ? (
+          <p className="font-medium">
+            {kind === 'folder' ? t('access.verifiedFolder') : t('access.verified')}
+          </p>
+        ) : null}
         {started ? <p className="font-medium">{t('access.started')}</p> : null}
       </div>
 
@@ -168,7 +192,16 @@ function External({ token }: { token: string }) {
         />
       ) : null}
 
-      {step.name === 'ready' ? (
+      {step.name === 'ready' && kind === 'folder' ? (
+        <AccessFolder
+          token={token}
+          grant={step.grant}
+          downloading={download.isPending ? (download.variables.fileId ?? null) : null}
+          onDownload={(file) => onDownload(step.grant, file)}
+          onNewCode={onSend}
+        />
+      ) : null}
+      {step.name === 'ready' && kind !== 'folder' ? (
         <button
           type="button"
           className={primaryButton}
@@ -179,6 +212,63 @@ function External({ token }: { token: string }) {
         </button>
       ) : null}
     </>
+  )
+}
+
+/** The shared folder, browsed with the grant; folders open in the page. */
+function AccessFolder({
+  token,
+  grant,
+  downloading,
+  onDownload,
+  onNewCode,
+}: {
+  token: string
+  grant: Grant
+  downloading: string | null
+  onDownload: (file: SharedFileItem) => void
+  /** The grant ended: a new code to the address gets a new one. */
+  onNewCode: () => void
+}) {
+  const { t } = useTranslation()
+  const [folderId, setFolderId] = useState<string | undefined>(undefined)
+  const contents = useAccessContents(token, grant.grant, folderId)
+
+  if (contents.isPending) return <p role="status">{t('access.loadingFolder')}</p>
+  if (contents.isError) {
+    const reason = reasonOf(contents.error)
+    return (
+      <div role="alert">
+        {reason === 'denied' ? (
+          <>
+            <p className="mb-3">{t('access.expired')}</p>
+            <button type="button" className={primaryButton} onClick={onNewCode}>
+              {t('access.sendCode')}
+            </button>
+          </>
+        ) : (
+          <>
+            <p className="mb-3">{t(`access.failed.${reason}`)}</p>
+            <button
+              type="button"
+              className={secondaryButton}
+              onClick={() => void contents.refetch()}
+            >
+              {t('shared.retry')}
+            </button>
+          </>
+        )}
+      </div>
+    )
+  }
+  if (!contents.data) return null
+  return (
+    <SharedFolder
+      contents={contents.data}
+      onOpen={setFolderId}
+      onDownload={onDownload}
+      downloading={downloading}
+    />
   )
 }
 

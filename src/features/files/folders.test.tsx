@@ -201,6 +201,10 @@ describe('folders', () => {
     expect(rows[1]).toHaveAccessibleName(/Work/)
     expect(rows[2]).toHaveAccessibleName(/notes\.txt/)
     expect(within(rows[1]!).getByText('Folder')).toBeVisible()
+    expect(within(rows[1]!).getByRole('link', { name: 'Share Work' })).toHaveAttribute(
+      'href',
+      `/files/in/${work.id}/sharing`,
+    )
 
     await user.click(screen.getByRole('link', { name: 'Open folder Work' }))
     expect(await screen.findByRole('heading', { level: 1, name: 'Work' })).toBeVisible()

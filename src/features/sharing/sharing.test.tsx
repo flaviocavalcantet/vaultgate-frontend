@@ -281,7 +281,7 @@ describe('shared with me', () => {
       'aria-current',
       'page',
     )
-    const table = await screen.findByRole('table', { name: 'Files shared with you' })
+    const table = await screen.findByRole('table', { name: 'Files and folders shared with you' })
     const held = within(table).getByRole('row', { name: /held\.csv/ })
     expect(within(held).getByText('Not available right now')).toBeVisible()
     expect(within(held).queryByRole('button')).toBeNull()

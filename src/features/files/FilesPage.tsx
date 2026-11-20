@@ -274,6 +274,13 @@ function FolderView({ folderId }: { folderId: string | undefined }) {
                     <td className="py-3 pr-4 text-graphite">{t('folders.folder')}</td>
                     <td className="py-3">
                       <div className="flex flex-wrap justify-end gap-2">
+                        <Link
+                          to={`${folderPath(sub.id)}/sharing`}
+                          className={secondary}
+                          aria-label={t('folders.shareName', { name: sub.name })}
+                        >
+                          {t('files.share')}
+                        </Link>
                         {actions({ kind: 'folder', item: sub })}
                       </div>
                     </td>
