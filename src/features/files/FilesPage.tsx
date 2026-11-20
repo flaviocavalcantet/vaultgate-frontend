@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 
@@ -14,7 +14,7 @@ import type { FileOut, Item } from './types'
 import { UploadList } from './UploadList'
 import { DownloadRefused, useDownload } from './useDownload'
 import { PAGE_SIZE, useFiles } from './useFiles'
-import { useFolder, useSubfolders } from './useFolders'
+import { ChangeRefused, useFolder, useSubfolders } from './useFolders'
 import { useUploads } from './useUploads'
 
 /** A folder, drawn beside its name; the name says what it is. */
@@ -61,12 +61,28 @@ function FolderView({ folderId }: { folderId: string | undefined }) {
     picked.forEach((file) => void uploads.start(file, folderId))
   }
 
+  // Where focus goes back to when a panel closes: the button that opened it, or, when
+  // that is gone (its row moved or deleted), New folder.
+  const opener = useRef<HTMLElement | null>(null)
+  const newFolder = useRef<HTMLButtonElement>(null)
+  const refocus = () => {
+    const back = opener.current?.isConnected ? opener.current : newFolder.current
+    back?.focus()
+  }
+
   const begin = (next: Action) => {
+    opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
     setNotice(null)
     setAction(next)
   }
-  const done = (text: string) => {
+  const close = () => {
     setAction(null)
+    refocus()
+  }
+  const done = (text: string) => {
+    // A row moved or deleted is about to leave the list: its buttons with it.
+    if (action?.kind === 'move' || action?.kind === 'delete') opener.current = null
+    close()
     setNotice({ kind: 'ok', text })
   }
   const actions = (target: Item) => {
@@ -120,20 +136,26 @@ function FolderView({ folderId }: { folderId: string | undefined }) {
   const folders = page === 0 ? (subfolders.data?.items ?? []) : []
 
   if (folderId !== undefined && folder.isError) {
+    const missing = folder.error instanceof ChangeRefused && folder.error.reason === 'notFound'
     return (
       <>
         <Breadcrumbs folder={undefined} />
         <PageHeading title={t('files.title')} />
-        <p role="alert">{t('folders.missing')}</p>
+        <div role="alert">
+          <p className="mb-3">{missing ? t('folders.missing') : t('folders.failed.load')}</p>
+          {missing ? null : (
+            <button type="button" className={secondary} onClick={() => void folder.refetch()}>
+              {t('files.retry')}
+            </button>
+          )}
+        </div>
       </>
     )
   }
 
-  const empty =
-    files.data !== undefined &&
-    subfolders.data !== undefined &&
-    files.data.items.length === 0 &&
-    subfolders.data.items.length === 0
+  // The list shows once both halves are in, so folders don't appear above files late.
+  const ready = files.data !== undefined && subfolders.data !== undefined
+  const empty = ready && files.data.items.length === 0 && subfolders.data.items.length === 0
 
   return (
     <>
@@ -145,7 +167,12 @@ function FolderView({ folderId }: { folderId: string | undefined }) {
           <PageHeading title={folder.data?.name ?? t('folders.loading')} />
         )}
         <div className="flex flex-wrap items-center gap-2">
-          <button type="button" className={secondary} onClick={() => begin({ kind: 'create' })}>
+          <button
+            ref={newFolder}
+            type="button"
+            className={secondary}
+            onClick={() => begin({ kind: 'create' })}
+          >
             {t('folders.new')}
           </button>
           <label htmlFor={inputId} className={primary}>
@@ -161,7 +188,7 @@ function FolderView({ folderId }: { folderId: string | undefined }) {
           action={action}
           folderId={folderId}
           onDone={done}
-          onCancel={() => setAction(null)}
+          onCancel={close}
         />
       ) : null}
 
@@ -189,7 +216,7 @@ function FolderView({ folderId }: { folderId: string | undefined }) {
 
       {empty ? <p>{folderId === undefined ? t('files.empty') : t('folders.empty')}</p> : null}
 
-      {files.data && (files.data.items.length > 0 || folders.length > 0) ? (
+      {ready && files.data && (files.data.items.length > 0 || folders.length > 0) ? (
         <>
           <div className="overflow-x-auto">
             <table className="w-full text-left">

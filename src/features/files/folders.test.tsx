@@ -1,6 +1,6 @@
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { http, HttpResponse } from 'msw'
+import { http, type HttpHandler, HttpResponse } from 'msw'
 
 import { CALLBACK_PATH } from '@/features/auth/userManager'
 import { renderApp, signedInUser, fakeUserManager } from '@/test/render'
@@ -168,8 +168,9 @@ class FakeVault {
   }
 }
 
-async function open(vault: FakeVault, path = '/files') {
-  server.use(...vault.handlers())
+async function open(vault: FakeVault, path = '/files', ...first: HttpHandler[]) {
+  // Handlers given first answer before the fake's.
+  server.use(...first, ...vault.handlers())
   const fake = fakeUserManager(() => Promise.resolve(signedInUser(path)))
   renderApp(CALLBACK_PATH, fake)
   return userEvent.setup()
@@ -218,6 +219,44 @@ describe('folders', () => {
   it('says so for a folder that isn’t there', async () => {
     await open(new FakeVault(), `/files/in/${crypto.randomUUID()}`)
     expect(await screen.findByText('This folder doesn’t exist, or isn’t yours.')).toBeVisible()
+  })
+
+  it('says when a folder can’t be loaded, and tries again', async () => {
+    const vault = new FakeVault()
+    const work = vault.folder('Work')
+    let down = true
+    const user = await open(
+      vault,
+      `/files/in/${work.id}`,
+      http.get(api('/folders/:id'), () =>
+        down ? HttpResponse.json({ detail: 'oops' }, { status: 500 }) : undefined,
+      ),
+    )
+    expect(
+      await screen.findByText('The folder could not be loaded. Try again in a moment.', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible()
+    down = false
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    expect(await screen.findByRole('heading', { level: 1, name: 'Work' })).toBeVisible()
+  })
+
+  it('gives focus back when a panel closes', async () => {
+    const vault = new FakeVault()
+    vault.file('notes.txt')
+    const user = await open(vault)
+    const rename = await screen.findByRole('button', { name: 'Rename notes.txt' })
+    await user.click(rename)
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(rename).toHaveFocus()
+
+    await user.click(screen.getByRole('button', { name: 'Delete notes.txt' }))
+    const panel = screen.getByRole('region', { name: 'Delete notes.txt' })
+    await user.click(within(panel).getByRole('button', { name: 'Delete notes.txt' }))
+    await screen.findByText('notes.txt deleted.')
+    // Its row is gone: focus goes to New folder.
+    expect(screen.getByRole('button', { name: 'New folder' })).toHaveFocus()
   })
 
   it('creates a folder where it is, and says when the name is taken', async () => {

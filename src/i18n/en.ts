@@ -132,6 +132,7 @@ export const en = {
       notFound: 'It no longer exists.',
       denied: 'You are not allowed to do this.',
       unknown: 'That didn’t work. Try again.',
+      load: 'The folder could not be loaded. Try again in a moment.',
     },
   },
   sharing: {
