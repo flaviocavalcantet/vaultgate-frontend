@@ -250,6 +250,29 @@ describe('folders', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Work' })).toBeVisible()
   })
 
+  it('says when the folders can’t be listed, and tries both again', async () => {
+    const vault = new FakeVault()
+    vault.folder('Work')
+    vault.file('notes.txt')
+    let down = true
+    const user = await open(
+      vault,
+      '/files',
+      http.get(api('/folders'), () =>
+        down ? HttpResponse.json({ detail: 'oops' }, { status: 500 }) : undefined,
+      ),
+    )
+    expect(
+      await screen.findByText('Your files could not be loaded. Try again in a moment.', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible()
+    down = false
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    expect(await row('Work')).toBeVisible()
+    expect(await row('notes.txt')).toBeVisible()
+  })
+
   it('gives focus back when a panel closes', async () => {
     const vault = new FakeVault()
     vault.file('notes.txt')

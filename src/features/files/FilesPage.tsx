@@ -159,6 +159,8 @@ function FolderView({ folderId }: { folderId: string | undefined }) {
     )
   }
 
+  // Either half failing is the list failing: one alert, one retry for both.
+  const failed = files.isError || subfolders.isError
   // The list shows once both halves are in, so folders don't appear above files late.
   const ready = files.data !== undefined && subfolders.data !== undefined
   const empty = ready && files.data.total === 0 && subfolders.data.items.length === 0
@@ -210,11 +212,17 @@ function FolderView({ folderId }: { folderId: string | undefined }) {
         ) : null}
       </div>
 
-      {files.isPending ? <p role="status">{t('files.loading')}</p> : null}
-      {files.isError ? (
+      {(files.isPending || subfolders.isPending) && !failed ? (
+        <p role="status">{t('files.loading')}</p>
+      ) : null}
+      {failed ? (
         <div role="alert">
           <p className="mb-3">{t('files.failed')}</p>
-          <button type="button" className={secondary} onClick={() => void files.refetch()}>
+          <button
+            type="button"
+            className={secondary}
+            onClick={() => void Promise.all([files.refetch(), subfolders.refetch()])}
+          >
             {t('files.retry')}
           </button>
         </div>
