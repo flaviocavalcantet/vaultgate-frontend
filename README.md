@@ -99,6 +99,14 @@ npm run api:check   # the same, failing if the result differs from what is commi
 `api/openapi.json` comes from the `vaultgate` repository (the API serves it at
 `/openapi.json`); replace it to take a newer API.
 
+## Releases
+
+A release is a `vX.Y.Z` tag on a commit of `main` whose `package.json` says X.Y.Z, with its
+notes in `docs/releases/vX.Y.Z.md`. Pushing the tag runs the Release workflow: it rebuilds
+nothing, gives the image CI published for that commit the version as a second tag (the
+same digest), and makes the GitHub Release from the notes. Each release names the
+VaultGate release it pairs with.
+
 ## Checks
 
 ```bash
