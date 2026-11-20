@@ -191,6 +191,28 @@ describe('a folder shared with me', () => {
     expect(await screen.findByRole('button', { name: 'Download a.txt' })).toBeVisible()
   })
 
+  it('goes back to the top when a folder inside it is gone', async () => {
+    let q3Gone = false
+    server.use(
+      http.get(api('/shared-with-me'), () => HttpResponse.json([sharedFolder()])),
+      http.get(api(`/shared-with-me/${SHARE}/contents`), ({ request }) => {
+        const folder = new URL(request.url).searchParams.get('folder_id')
+        if (folder === Q3 && q3Gone) {
+          return HttpResponse.json({ detail: 'Folder not found' }, { status: 404 })
+        }
+        return HttpResponse.json(contents(folder))
+      }),
+    )
+    const user = await openAt(`/shared/${SHARE}`, 'Work')
+    q3Gone = true
+    await user.click(await screen.findByRole('button', { name: 'Open folder Q3' }))
+    expect(
+      await screen.findByText('This folder is no longer in the share: it was moved or deleted.'),
+    ).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Back to the shared folder' }))
+    expect(await screen.findByRole('button', { name: 'Download a.txt' })).toBeVisible()
+  })
+
   it('says so when the folder is no longer shared', async () => {
     server.use(
       http.get(api('/shared-with-me'), () => HttpResponse.json([])),

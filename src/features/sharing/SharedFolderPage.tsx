@@ -50,6 +50,26 @@ export function SharedFolderPage() {
 
   if (contents.isError) {
     const reason = reasonOf(contents.error)
+    // A folder inside the share that is no longer there (deleted, moved out): the share
+    // itself is fine, so back to its top.
+    if (folderId !== undefined && reason === 'notFound') {
+      return (
+        <>
+          <PageHeading title={share?.name ?? t('sharedFolder.titleLoading')} />
+          <div role="alert" className="mb-4">
+            <p className="mb-3">{t('sharedFolder.folderGone')}</p>
+            <button
+              type="button"
+              className={secondaryButton}
+              onClick={() => setFolderId(undefined)}
+            >
+              {t('sharedFolder.toTop')}
+            </button>
+          </div>
+          {back}
+        </>
+      )
+    }
     const gone = reason === 'notFound' || reason === 'gone'
     return (
       <>

@@ -253,6 +253,8 @@ export const en = {
     details_other:
       'Shared by {{sharer}}. Works until {{expires}}, for {{count}} more downloads from anything in it.',
     gone: 'This folder is no longer shared with you.',
+    folderGone: 'This folder is no longer in the share: it was moved or deleted.',
+    toTop: 'Back to the shared folder',
     failed: 'The folder could not be loaded. Try again in a moment.',
     path: 'Shared folder path',
     onlyReady:

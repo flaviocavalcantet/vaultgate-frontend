@@ -237,6 +237,16 @@ function AccessFolder({
   if (contents.isPending) return <p role="status">{t('access.loadingFolder')}</p>
   if (contents.isError) {
     const reason = reasonOf(contents.error)
+    if (folderId !== undefined && reason === 'notFound') {
+      return (
+        <div role="alert">
+          <p className="mb-3">{t('sharedFolder.folderGone')}</p>
+          <button type="button" className={secondaryButton} onClick={() => setFolderId(undefined)}>
+            {t('sharedFolder.toTop')}
+          </button>
+        </div>
+      )
+    }
     return (
       <div role="alert">
         {reason === 'denied' ? (
