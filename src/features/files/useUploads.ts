@@ -14,7 +14,8 @@ export type UploadState =
   | { phase: 'failed'; reason: UploadFailure }
 
 /** Why an upload failed, in terms a user can act on. */
-export type UploadFailure = 'tooLarge' | 'tooMany' | 'refused' | 'unreachable' | 'unknown'
+export type UploadFailure =
+  'tooLarge' | 'tooMany' | 'nameTaken' | 'refused' | 'unreachable' | 'unknown'
 
 export interface Upload {
   id: string
@@ -40,6 +41,15 @@ function failure(status: number): UploadFailure {
   return 'unknown'
 }
 
+/** Why registering refused: a name already in the folder is told apart (ADR 0020). */
+function registerFailure(response: Response, error: unknown): UploadFailure {
+  const detail = (error as { detail?: unknown } | undefined)?.detail
+  if (response.status === 409 && typeof detail === 'string' && detail.includes('already here')) {
+    return 'nameTaken'
+  }
+  return failure(response.status)
+}
+
 /**
  * Uploads in this page: each file is registered with the API (which hands back a
  * single-use upload intent) and its bytes sent to the gateway, with progress. The list
@@ -62,7 +72,8 @@ export function useUploads() {
   }, [])
 
   const start = useCallback(
-    async (file: File) => {
+    /** Upload a file into a folder of the caller's (none: the top level). */
+    async (file: File, folderId?: string) => {
       const id = crypto.randomUUID()
       const controller = new AbortController()
       controllers.current.set(id, controller)
@@ -71,12 +82,17 @@ export function useUploads() {
         ...all,
       ])
       try {
-        const { data, response } = await api.POST('/files', {
-          body: { name: file.name, size: file.size, content_type: mediaType(file) },
+        const { data, error, response } = await api.POST('/files', {
+          body: {
+            name: file.name,
+            size: file.size,
+            content_type: mediaType(file),
+            folder_id: folderId ?? null,
+          },
           signal: controller.signal,
         })
         if (!data) {
-          update(id, { phase: 'failed', reason: failure(response.status) })
+          update(id, { phase: 'failed', reason: registerFailure(response, error) })
           return
         }
         update(id, { phase: 'sending', sent: 0, total: file.size })

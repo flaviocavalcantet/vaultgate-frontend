@@ -430,7 +430,7 @@ export interface paths {
     }
     /**
      * List Files
-     * @description The caller's files, newest first.
+     * @description The caller's files in one of their folders (none: the top level), newest first.
      */
     get: operations['list_files_files_get']
     put?: never
@@ -456,10 +456,21 @@ export interface paths {
     get: operations['get_file_files__file_id__get']
     put?: never
     post?: never
-    delete?: never
+    /**
+     * Delete File
+     * @description Delete a file at once: its row and wrapped key (so it can't be decrypted again),
+     *     its shares and scan results; the gateway then deletes the stored object
+     *     (vaultgate_api.deletions). Works whatever the file's state, quarantined included.
+     */
+    delete: operations['delete_file_files__file_id__delete']
     options?: never
     head?: never
-    patch?: never
+    /**
+     * Change File
+     * @description Rename a file, move it to another folder, or both. Only the metadata changes: the
+     *     stored object, its key and its scan stay as they are.
+     */
+    patch: operations['change_file_files__file_id__patch']
     trace?: never
   }
   '/files/{file_id}/download': {
@@ -521,6 +532,120 @@ export interface paths {
      * @description Revoke a share at once. Revoking twice is fine.
      */
     delete: operations['revoke_share_files__file_id__shares__share_id__delete']
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/folders': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * List Folders
+     * @description The folders in a folder of the caller's (none: the top level), by name.
+     */
+    get: operations['list_folders_folders_get']
+    put?: never
+    /** Create Folder */
+    post: operations['create_folder_folders_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/folders/{folder_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Folder */
+    get: operations['get_folder_folders__folder_id__get']
+    put?: never
+    post?: never
+    /**
+     * Delete Folder
+     * @description Delete a folder with everything in it, at every level: each file as
+     *     `DELETE /files/{id}` would (vaultgate_api.deletions), then the folders.
+     */
+    delete: operations['delete_folder_folders__folder_id__delete']
+    options?: never
+    head?: never
+    /**
+     * Change Folder
+     * @description Rename a folder, move it (with all it holds) into another, or both.
+     */
+    patch: operations['change_folder_folders__folder_id__patch']
+    trace?: never
+  }
+  '/folders/{folder_id}/shares': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * List Folder Shares
+     * @description The folder's shares, newest first, with their state.
+     */
+    get: operations['list_folder_shares_folders__folder_id__shares_get']
+    put?: never
+    /**
+     * Create Folder Share
+     * @description Share one of the caller's folders, with everything in it now and later, with one
+     *     recipient. Its files are checked one by one when the recipient lists and downloads
+     *     them; the share's downloads count across all of them.
+     */
+    post: operations['create_folder_share_folders__folder_id__shares_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/folders/{folder_id}/shares/{share_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /**
+     * Revoke Folder Share
+     * @description Revoke a folder's share at once. Revoking twice is fine.
+     */
+    delete: operations['revoke_folder_share_folders__folder_id__shares__share_id__delete']
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/folders/{folder_id}/totals': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Folder Totals
+     * @description How many folders and files the folder holds at every level, and their size: what
+     *     a client shows before asking to delete it.
+     */
+    get: operations['folder_totals_folders__folder_id__totals_get']
+    put?: never
+    post?: never
+    delete?: never
     options?: never
     head?: never
     patch?: never
@@ -891,6 +1016,27 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/shared-with-me/{share_id}/contents': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Shared Contents
+     * @description A folder of a folder shared with the caller (none: the shared folder itself):
+     *     its subfolders and the files that can be downloaded now.
+     */
+    get: operations['shared_contents_shared_with_me__share_id__contents_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/shared-with-me/{share_id}/download': {
     parameters: {
       query?: never
@@ -902,7 +1048,8 @@ export interface paths {
     put?: never
     /**
      * Create Shared Download
-     * @description A single-use download intent for a file shared with the caller.
+     * @description A single-use download intent for a file shared with the caller, or (`file_id`)
+     *     a file in a folder shared with them.
      */
     post: operations['create_shared_download_shared_with_me__share_id__download_post']
     delete?: never
@@ -952,6 +1099,27 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/shares/access/contents': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Share Contents
+     * @description A folder of a folder share, once the address is proven: its subfolders and the
+     *     files that can be downloaded now.
+     */
+    post: operations['share_contents_shares_access_contents_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/shares/access/downloads': {
     parameters: {
       query?: never
@@ -963,8 +1131,8 @@ export interface paths {
     put?: never
     /**
      * Create Share Download
-     * @description A single-use download intent for the shared file. The gateway counts it against
-     *     the share's downloads when it starts.
+     * @description A single-use download intent for the shared file, or a file in the shared
+     *     folder. The gateway counts it against the share's downloads when it starts.
      */
     post: operations['create_share_download_shares_access_downloads_post']
     delete?: never
@@ -1006,6 +1174,11 @@ export interface components {
        * Format: date-time
        */
       expires_at: string
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind: 'file' | 'folder'
       /** Recipient Hint */
       recipient_hint: string
       /**
@@ -1066,6 +1239,8 @@ export interface components {
       declared_size: number
       /** Downloadable */
       downloadable: boolean
+      /** Folder Id */
+      folder_id: string | null
       /**
        * Id
        * Format: uuid
@@ -1188,8 +1363,19 @@ export interface components {
       /** Code */
       code: string
     }
+    /** ContentsIn */
+    ContentsIn: {
+      /** Folder Id */
+      folder_id?: string | null
+      /** Grant */
+      grant: string
+      /** Token */
+      token: string
+    }
     /** DownloadIn */
     DownloadIn: {
+      /** File Id */
+      file_id?: string | null
       /** Grant */
       grant: string
       /** Token */
@@ -1271,6 +1457,17 @@ export interface components {
        */
       reason: 'allowed' | 'denied' | 'no_matching_policy'
     }
+    /**
+     * FileChange
+     * @description A rename, a move, or both. `folder_id` given as null moves to the top level;
+     *     left out, the file stays where it is.
+     */
+    FileChange: {
+      /** Folder Id */
+      folder_id?: string | null
+      /** Name */
+      name?: string | null
+    }
     /** FileCreate */
     FileCreate: {
       /**
@@ -1278,6 +1475,8 @@ export interface components {
        * @default application/octet-stream
        */
       content_type: string
+      /** Folder Id */
+      folder_id?: string | null
       /** Name */
       name: string
       /** Size */
@@ -1301,6 +1500,8 @@ export interface components {
       declared_size: number
       /** Downloadable */
       downloadable: boolean
+      /** Folder Id */
+      folder_id: string | null
       /**
        * Id
        * Format: uuid
@@ -1337,6 +1538,83 @@ export interface components {
       count: number
       /** Kind */
       kind: string
+    }
+    /**
+     * FolderChange
+     * @description A rename, a move, or both. `parent_id` given as null moves to the top level;
+     *     left out, the folder stays where it is.
+     */
+    FolderChange: {
+      /** Name */
+      name?: string | null
+      /** Parent Id */
+      parent_id?: string | null
+    }
+    /** FolderCreate */
+    FolderCreate: {
+      /** Name */
+      name: string
+      /** Parent Id */
+      parent_id?: string | null
+    }
+    /** FolderDetail */
+    FolderDetail: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Name */
+      name: string
+      /** Parent Id */
+      parent_id: string | null
+      /** Path */
+      path: components['schemas']['PathEntry'][]
+    }
+    /** FolderOut */
+    FolderOut: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Name */
+      name: string
+      /** Parent Id */
+      parent_id: string | null
+    }
+    /** FolderPage */
+    FolderPage: {
+      /** Items */
+      items: components['schemas']['FolderOut'][]
+      /** Limit */
+      limit: number
+      /** Offset */
+      offset: number
+      /** Total */
+      total: number
+    }
+    /**
+     * FolderTotals
+     * @description What the folder holds, at every level below it: what deleting it would delete.
+     */
+    FolderTotals: {
+      /** Bytes */
+      bytes: number
+      /** Files */
+      files: number
+      /** Folders */
+      folders: number
     }
     /** GrantOut */
     GrantOut: {
@@ -1534,6 +1812,16 @@ export interface components {
       /** Total */
       total: number
     }
+    /** PathEntry */
+    PathEntry: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Name */
+      name: string
+    }
     /** PolicyIn */
     PolicyIn: {
       /** Actions */
@@ -1730,11 +2018,10 @@ export interface components {
        * Format: date-time
        */
       expires_at: string
-      /**
-       * File Id
-       * Format: uuid
-       */
-      file_id: string
+      /** File Id */
+      file_id: string | null
+      /** Folder Id */
+      folder_id: string | null
       /**
        * Id
        * Format: uuid
@@ -1754,12 +2041,38 @@ export interface components {
        */
       state: 'active' | 'expired' | 'used' | 'revoked'
     }
+    /** SharedContents */
+    SharedContents: {
+      /** Files */
+      files: components['schemas']['SharedFileItem'][]
+      folder: components['schemas']['SharedItem']
+      /** Folders */
+      folders: components['schemas']['SharedItem'][]
+      /** Path */
+      path: components['schemas']['SharedItem'][]
+      /** Truncated */
+      truncated: boolean
+    }
+    /** SharedFileItem */
+    SharedFileItem: {
+      /** Content Type */
+      content_type: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Name */
+      name: string
+      /** Size */
+      size: number | null
+    }
     /** SharedFileOut */
     SharedFileOut: {
       /** Available */
       available: boolean
       /** Content Type */
-      content_type: string
+      content_type: string | null
       /** Downloads Left */
       downloads_left: number
       /**
@@ -1767,11 +2080,15 @@ export interface components {
        * Format: date-time
        */
       expires_at: string
+      /** File Id */
+      file_id: string | null
+      /** Folder Id */
+      folder_id: string | null
       /**
-       * File Id
-       * Format: uuid
+       * Kind
+       * @enum {string}
        */
-      file_id: string
+      kind: 'file' | 'folder'
       /** Name */
       name: string
       /**
@@ -1783,6 +2100,16 @@ export interface components {
       shared_by: string | null
       /** Size */
       size: number | null
+    }
+    /** SharedItem */
+    SharedItem: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Name */
+      name: string
     }
     /** TokenEnrollmentIn */
     TokenEnrollmentIn: {
@@ -2831,6 +3158,7 @@ export interface operations {
   list_files_files_get: {
     parameters: {
       query?: {
+        folder_id?: string | null
         limit?: number
         offset?: number
       }
@@ -2903,6 +3231,70 @@ export interface operations {
       cookie?: never
     }
     requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['FileOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  delete_file_files__file_id__delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        file_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  change_file_files__file_id__patch: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        file_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FileChange']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
@@ -3039,6 +3431,294 @@ export interface operations {
           [name: string]: unknown
         }
         content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  list_folders_folders_get: {
+    parameters: {
+      query?: {
+        parent_id?: string | null
+        limit?: number
+        offset?: number
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['FolderPage']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  create_folder_folders_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FolderCreate']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['FolderOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  get_folder_folders__folder_id__get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        folder_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['FolderDetail']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  delete_folder_folders__folder_id__delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        folder_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  change_folder_folders__folder_id__patch: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        folder_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FolderChange']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['FolderOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  list_folder_shares_folders__folder_id__shares_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        folder_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ShareOut'][]
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  create_folder_share_folders__folder_id__shares_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        folder_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ShareCreate']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ShareCreated']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  revoke_folder_share_folders__folder_id__shares__share_id__delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        folder_id: string
+        share_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  folder_totals_folders__folder_id__totals_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        folder_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['FolderTotals']
+        }
       }
       /** @description Validation Error */
       422: {
@@ -3532,9 +4212,44 @@ export interface operations {
       }
     }
   }
+  shared_contents_shared_with_me__share_id__contents_get: {
+    parameters: {
+      query?: {
+        folder_id?: string | null
+      }
+      header?: never
+      path: {
+        share_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SharedContents']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   create_shared_download_shared_with_me__share_id__download_post: {
     parameters: {
-      query?: never
+      query?: {
+        file_id?: string | null
+      }
       header?: never
       path: {
         share_id: string
@@ -3616,6 +4331,39 @@ export interface operations {
           'application/json': {
             [key: string]: unknown
           }
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  share_contents_shares_access_contents_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ContentsIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SharedContents']
         }
       }
       /** @description Validation Error */

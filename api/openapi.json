@@ -12,6 +12,14 @@
             "title": "Expires At",
             "type": "string"
           },
+          "kind": {
+            "enum": [
+              "file",
+              "folder"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
           "recipient_hint": {
             "title": "Recipient Hint",
             "type": "string"
@@ -26,6 +34,7 @@
           }
         },
         "required": [
+          "kind",
           "recipient_kind",
           "recipient_hint",
           "expires_at",
@@ -161,6 +170,18 @@
             "title": "Downloadable",
             "type": "boolean"
           },
+          "folder_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folder Id"
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
@@ -257,6 +278,7 @@
         "required": [
           "id",
           "name",
+          "folder_id",
           "content_type",
           "declared_size",
           "status",
@@ -518,8 +540,54 @@
         "title": "CompleteIn",
         "type": "object"
       },
+      "ContentsIn": {
+        "properties": {
+          "folder_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folder Id"
+          },
+          "grant": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Grant",
+            "type": "string"
+          },
+          "token": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "grant"
+        ],
+        "title": "ContentsIn",
+        "type": "object"
+      },
       "DownloadIn": {
         "properties": {
+          "file_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Id"
+          },
           "grant": {
             "maxLength": 256,
             "minLength": 1,
@@ -735,6 +803,38 @@
         "title": "EvaluateOut",
         "type": "object"
       },
+      "FileChange": {
+        "description": "A rename, a move, or both. `folder_id` given as null moves to the top level;\nleft out, the file stays where it is.",
+        "properties": {
+          "folder_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folder Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "title": "FileChange",
+        "type": "object"
+      },
       "FileCreate": {
         "properties": {
           "content_type": {
@@ -742,6 +842,18 @@
             "maxLength": 255,
             "title": "Content Type",
             "type": "string"
+          },
+          "folder_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folder Id"
           },
           "name": {
             "maxLength": 255,
@@ -796,6 +908,18 @@
           "downloadable": {
             "title": "Downloadable",
             "type": "boolean"
+          },
+          "folder_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folder Id"
           },
           "id": {
             "format": "uuid",
@@ -862,6 +986,7 @@
         "required": [
           "id",
           "name",
+          "folder_id",
           "content_type",
           "declared_size",
           "status",
@@ -923,6 +1048,204 @@
           "count"
         ],
         "title": "FindingOut",
+        "type": "object"
+      },
+      "FolderChange": {
+        "description": "A rename, a move, or both. `parent_id` given as null moves to the top level;\nleft out, the folder stays where it is.",
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          }
+        },
+        "title": "FolderChange",
+        "type": "object"
+      },
+      "FolderCreate": {
+        "properties": {
+          "name": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "FolderCreate",
+        "type": "object"
+      },
+      "FolderDetail": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "path": {
+            "items": {
+              "$ref": "#/components/schemas/PathEntry"
+            },
+            "title": "Path",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "parent_id",
+          "created_at",
+          "path"
+        ],
+        "title": "FolderDetail",
+        "type": "object"
+      },
+      "FolderOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "parent_id",
+          "created_at"
+        ],
+        "title": "FolderOut",
+        "type": "object"
+      },
+      "FolderPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FolderOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
+        "title": "FolderPage",
+        "type": "object"
+      },
+      "FolderTotals": {
+        "description": "What the folder holds, at every level below it: what deleting it would delete.",
+        "properties": {
+          "bytes": {
+            "title": "Bytes",
+            "type": "integer"
+          },
+          "files": {
+            "title": "Files",
+            "type": "integer"
+          },
+          "folders": {
+            "title": "Folders",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "folders",
+          "files",
+          "bytes"
+        ],
+        "title": "FolderTotals",
         "type": "object"
       },
       "GrantOut": {
@@ -1421,6 +1744,25 @@
         "title": "Page[UserOut]",
         "type": "object"
       },
+      "PathEntry": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "PathEntry",
+        "type": "object"
+      },
       "PolicyIn": {
         "properties": {
           "actions": {
@@ -1885,9 +2227,28 @@
             "type": "string"
           },
           "file_id": {
-            "format": "uuid",
-            "title": "File Id",
-            "type": "string"
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Id"
+          },
+          "folder_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folder Id"
           },
           "id": {
             "format": "uuid",
@@ -1932,6 +2293,7 @@
         "required": [
           "id",
           "file_id",
+          "folder_id",
           "recipient_email",
           "recipient_kind",
           "created_at",
@@ -1944,6 +2306,83 @@
         "title": "ShareOut",
         "type": "object"
       },
+      "SharedContents": {
+        "properties": {
+          "files": {
+            "items": {
+              "$ref": "#/components/schemas/SharedFileItem"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "folder": {
+            "$ref": "#/components/schemas/SharedItem"
+          },
+          "folders": {
+            "items": {
+              "$ref": "#/components/schemas/SharedItem"
+            },
+            "title": "Folders",
+            "type": "array"
+          },
+          "path": {
+            "items": {
+              "$ref": "#/components/schemas/SharedItem"
+            },
+            "title": "Path",
+            "type": "array"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "folder",
+          "path",
+          "folders",
+          "files",
+          "truncated"
+        ],
+        "title": "SharedContents",
+        "type": "object"
+      },
+      "SharedFileItem": {
+        "properties": {
+          "content_type": {
+            "title": "Content Type",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "content_type",
+          "size"
+        ],
+        "title": "SharedFileItem",
+        "type": "object"
+      },
       "SharedFileOut": {
         "properties": {
           "available": {
@@ -1951,8 +2390,15 @@
             "type": "boolean"
           },
           "content_type": {
-            "title": "Content Type",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Type"
           },
           "downloads_left": {
             "title": "Downloads Left",
@@ -1964,8 +2410,35 @@
             "type": "string"
           },
           "file_id": {
-            "format": "uuid",
-            "title": "File Id",
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Id"
+          },
+          "folder_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folder Id"
+          },
+          "kind": {
+            "enum": [
+              "file",
+              "folder"
+            ],
+            "title": "Kind",
             "type": "string"
           },
           "name": {
@@ -2002,7 +2475,9 @@
         },
         "required": [
           "share_id",
+          "kind",
           "file_id",
+          "folder_id",
           "name",
           "content_type",
           "size",
@@ -2012,6 +2487,25 @@
           "available"
         ],
         "title": "SharedFileOut",
+        "type": "object"
+      },
+      "SharedItem": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "SharedItem",
         "type": "object"
       },
       "TokenEnrollmentIn": {
@@ -4132,9 +4626,26 @@
     },
     "/files": {
       "get": {
-        "description": "The caller's files, newest first.",
+        "description": "The caller's files in one of their folders (none: the top level), newest first.",
         "operationId": "list_files_files_get",
         "parameters": [
+          {
+            "in": "query",
+            "name": "folder_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Folder Id"
+            }
+          },
           {
             "in": "query",
             "name": "limit",
@@ -4238,6 +4749,46 @@
       }
     },
     "/files/{file_id}": {
+      "delete": {
+        "description": "Delete a file at once: its row and wrapped key (so it can't be decrypted again),\nits shares and scan results; the gateway then deletes the stored object\n(vaultgate_api.deletions). Works whatever the file's state, quarantined included.",
+        "operationId": "delete_file_files__file_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "file_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "File Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete File",
+        "tags": [
+          "files"
+        ]
+      },
       "get": {
         "operationId": "get_file_files__file_id__get",
         "parameters": [
@@ -4280,6 +4831,63 @@
           }
         ],
         "summary": "Get File",
+        "tags": [
+          "files"
+        ]
+      },
+      "patch": {
+        "description": "Rename a file, move it to another folder, or both. Only the metadata changes: the\nstored object, its key and its scan stay as they are.",
+        "operationId": "change_file_files__file_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "file_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "File Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FileChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Change File",
         "tags": [
           "files"
         ]
@@ -4493,6 +5101,485 @@
         "summary": "Revoke Share",
         "tags": [
           "shares"
+        ]
+      }
+    },
+    "/folders": {
+      "get": {
+        "description": "The folders in a folder of the caller's (none: the top level), by name.",
+        "operationId": "list_folders_folders_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "parent_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Parent Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 200,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolderPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Folders",
+        "tags": [
+          "folders"
+        ]
+      },
+      "post": {
+        "operationId": "create_folder_folders_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FolderCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolderOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Folder",
+        "tags": [
+          "folders"
+        ]
+      }
+    },
+    "/folders/{folder_id}": {
+      "delete": {
+        "description": "Delete a folder with everything in it, at every level: each file as\n`DELETE /files/{id}` would (vaultgate_api.deletions), then the folders.",
+        "operationId": "delete_folder_folders__folder_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "folder_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Folder Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Folder",
+        "tags": [
+          "folders"
+        ]
+      },
+      "get": {
+        "operationId": "get_folder_folders__folder_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "folder_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Folder Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolderDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Folder",
+        "tags": [
+          "folders"
+        ]
+      },
+      "patch": {
+        "description": "Rename a folder, move it (with all it holds) into another, or both.",
+        "operationId": "change_folder_folders__folder_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "folder_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Folder Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FolderChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolderOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Change Folder",
+        "tags": [
+          "folders"
+        ]
+      }
+    },
+    "/folders/{folder_id}/shares": {
+      "get": {
+        "description": "The folder's shares, newest first, with their state.",
+        "operationId": "list_folder_shares_folders__folder_id__shares_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "folder_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Folder Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ShareOut"
+                  },
+                  "title": "Response List Folder Shares Folders  Folder Id  Shares Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Folder Shares",
+        "tags": [
+          "shares"
+        ]
+      },
+      "post": {
+        "description": "Share one of the caller's folders, with everything in it now and later, with one\nrecipient. Its files are checked one by one when the recipient lists and downloads\nthem; the share's downloads count across all of them.",
+        "operationId": "create_folder_share_folders__folder_id__shares_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "folder_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Folder Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShareCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShareCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Folder Share",
+        "tags": [
+          "shares"
+        ]
+      }
+    },
+    "/folders/{folder_id}/shares/{share_id}": {
+      "delete": {
+        "description": "Revoke a folder's share at once. Revoking twice is fine.",
+        "operationId": "revoke_folder_share_folders__folder_id__shares__share_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "folder_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Folder Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "share_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Share Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Revoke Folder Share",
+        "tags": [
+          "shares"
+        ]
+      }
+    },
+    "/folders/{folder_id}/totals": {
+      "get": {
+        "description": "How many folders and files the folder holds at every level, and their size: what\na client shows before asking to delete it.",
+        "operationId": "folder_totals_folders__folder_id__totals_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "folder_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Folder Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolderTotals"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Folder Totals",
+        "tags": [
+          "folders"
         ]
       }
     },
@@ -5113,9 +6200,75 @@
         ]
       }
     },
+    "/shared-with-me/{share_id}/contents": {
+      "get": {
+        "description": "A folder of a folder shared with the caller (none: the shared folder itself):\nits subfolders and the files that can be downloaded now.",
+        "operationId": "shared_contents_shared_with_me__share_id__contents_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "share_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Share Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "folder_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Folder Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SharedContents"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Shared Contents",
+        "tags": [
+          "shares"
+        ]
+      }
+    },
     "/shared-with-me/{share_id}/download": {
       "post": {
-        "description": "A single-use download intent for a file shared with the caller.",
+        "description": "A single-use download intent for a file shared with the caller, or (`file_id`)\na file in a folder shared with them.",
         "operationId": "create_shared_download_shared_with_me__share_id__download_post",
         "parameters": [
           {
@@ -5126,6 +6279,23 @@
               "format": "uuid",
               "title": "Share Id",
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "file_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "File Id"
             }
           }
         ],
@@ -5251,9 +6421,51 @@
         ]
       }
     },
+    "/shares/access/contents": {
+      "post": {
+        "description": "A folder of a folder share, once the address is proven: its subfolders and the\nfiles that can be downloaded now.",
+        "operationId": "share_contents_shares_access_contents_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SharedContents"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Share Contents",
+        "tags": [
+          "share access"
+        ]
+      }
+    },
     "/shares/access/downloads": {
       "post": {
-        "description": "A single-use download intent for the shared file. The gateway counts it against\nthe share's downloads when it starts.",
+        "description": "A single-use download intent for the shared file, or a file in the shared\nfolder. The gateway counts it against the share's downloads when it starts.",
         "operationId": "create_share_download_shares_access_downloads_post",
         "requestBody": {
           "content": {
