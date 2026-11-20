@@ -28,6 +28,7 @@ export const routes: RouteObject[] = [
         children: [
           { index: true, element: <HomePage /> },
           { path: 'files', element: <FilesPage /> },
+          { path: 'files/in/:folderId', element: <FilesPage /> },
           { path: 'files/:fileId/sharing', element: <ShareFilePage /> },
           { path: 'shared', element: <SharedWithMePage /> },
           {

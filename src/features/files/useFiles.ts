@@ -15,15 +15,24 @@ export function settling(file: FileOut): boolean {
   return file.status === 'uploaded' && (file.scan === null || file.scan.verdict === 'pending')
 }
 
-/** One page of the caller's files, newest first; asked again while any is settling. */
-export function useFiles(page: number) {
+/**
+ * One page of the caller's files in a folder (none: the top level), newest first; asked
+ * again while any is settling.
+ */
+export function useFiles(page: number, folderId?: string) {
   const api = useApi()
   return useQuery({
-    queryKey: [...filesKey, page],
+    queryKey: [...filesKey, folderId ?? null, page],
     placeholderData: keepPreviousData,
     queryFn: async ({ signal }): Promise<FilePage> => {
       const { data, response } = await api.GET('/files', {
-        params: { query: { limit: PAGE_SIZE, offset: page * PAGE_SIZE } },
+        params: {
+          query: {
+            ...(folderId ? { folder_id: folderId } : {}),
+            limit: PAGE_SIZE,
+            offset: page * PAGE_SIZE,
+          },
+        },
         signal,
       })
       if (!data) throw new Error(`GET /files answered ${response.status}`)

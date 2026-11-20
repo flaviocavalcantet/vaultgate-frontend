@@ -156,6 +156,25 @@ replace `api/openapi.json` and run `npm run api:types`.
   disk at any size, and the token never appears in an address. The form is removed as
   soon as it is submitted.
 
+## Folders
+
+- **Where you are** is in the address: My files at `/files`, a folder at
+  `/files/in/<id>`, so a folder can be bookmarked, and Back goes up the way you came.
+  The breadcrumbs (`GET /folders/{id}`, its path) lead back up; the current folder is
+  marked, not linked. A folder that isn't there, or isn't yours, says so.
+- **A folder's page** lists its folders first (by name), then its files a page at a
+  time as before. Uploads go into the folder the page shows.
+- **Actions** (vaultgate ADR 0020): new folder, rename and move (for files and folders),
+  delete. Each opens one panel above the list, with focus on its first field; the
+  outcome is announced in the page's live region. Moving browses the user's folders
+  from where the item is; a folder is never offered as a place inside itself.
+- **Deleting** can't be undone, and the panels say so. A file's deletion is one
+  confirmation. A folder's lists what goes with it (`GET /folders/{id}/totals`: its
+  folders, files and size, at every level) and asks for its name to be typed exactly.
+- **Refusals** are the API's: a name already in the folder (any case, files and folders
+  together), a folder into itself, too deep. The app tells them apart by the 409's
+  detail and shows its own words for each, so every message stays translatable.
+
 ## Sharing
 
 - **An owner shares** a file from its sharing page (`/files/<id>/sharing`): one link
@@ -314,10 +333,13 @@ replace `api/openapi.json` and run `npm run api:types`.
 - [x] **F7, Design:** a visual identity (security printing): semantic colour tokens
       with dark mode, Atkinson Hyperlegible, guilloché at the front doors, status seals.
       See [The look](#the-look).
+- [ ] **F8, Folders** (vaultgate's M12.6): folders and their breadcrumbs; new folder,
+      rename, move, delete (a folder with everything in it, its contents shown and its
+      name typed first); sharing a folder, and browsing one shared with you, as a
+      VaultGate user or from a link; browser tests. See [Folders](#folders).
 
 ## Known limits
 
-- **No file deletion.** The API has no route for it, so the app doesn't offer it.
 - **A failed download shows in the browser's download list,** not in the page: once
   the form is submitted, the page doesn't see the gateway's answer. The intent is asked
   for just before, so a refusal is rare (the scan state changing in between).

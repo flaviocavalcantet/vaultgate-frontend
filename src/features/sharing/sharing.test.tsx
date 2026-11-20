@@ -19,6 +19,7 @@ function file(overrides: Partial<FileOut> = {}): FileOut {
   return {
     id: FILE_ID,
     name: 'report.pdf',
+    folder_id: null,
     content_type: 'application/pdf',
     declared_size: 2048,
     status: 'uploaded',
@@ -43,6 +44,7 @@ function share(overrides: Partial<ShareOut> = {}): ShareOut {
   return {
     id: crypto.randomUUID(),
     file_id: FILE_ID,
+    folder_id: null,
     recipient_email: 'bob@example.test',
     recipient_kind: 'external',
     created_at: '2026-11-10T10:00:00Z',
@@ -237,7 +239,9 @@ describe('sharing a file', () => {
 function sharedFile(overrides: Partial<SharedFile> = {}): SharedFile {
   return {
     share_id: crypto.randomUUID(),
+    kind: 'file',
     file_id: crypto.randomUUID(),
+    folder_id: null,
     name: 'plan.docx',
     content_type: 'application/octet-stream',
     size: 4096,

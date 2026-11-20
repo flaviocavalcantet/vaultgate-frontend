@@ -21,11 +21,17 @@ export const alice: components['schemas']['UserOut'] = {
 
 export const api = (path: string) => `${testConfig.apiUrl}${path}`
 
-/** The API as the tests know it: /me answers alice to her token, 401 to anything else. */
+/**
+ * The API as the tests know it: /me answers alice to her token, 401 to anything else;
+ * she has no folders unless a test says otherwise.
+ */
 export const server = setupServer(
   http.get(api('/me'), ({ request }) =>
     request.headers.get('Authorization') === `Bearer ${ACCESS_TOKEN}`
       ? HttpResponse.json(alice)
       : HttpResponse.json({ detail: 'Not authenticated' }, { status: 401 }),
+  ),
+  http.get(api('/folders'), () =>
+    HttpResponse.json({ items: [], total: 0, limit: 500, offset: 0 }),
   ),
 )

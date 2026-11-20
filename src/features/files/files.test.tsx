@@ -17,6 +17,7 @@ function file(overrides: Partial<FileOut> = {}): FileOut {
   return {
     id: crypto.randomUUID(),
     name: 'report.pdf',
+    folder_id: null,
     content_type: 'application/pdf',
     declared_size: 2048,
     status: 'uploaded',
@@ -207,7 +208,9 @@ describe('uploading', () => {
     await userEvent.upload(screen.getByLabelText('Upload files'), picked)
 
     expect(await screen.findByText('Uploaded. The scan runs next.')).toBeVisible()
-    expect(registered).toEqual([{ name: 'notes.txt', size: 5, content_type: 'text/plain' }])
+    expect(registered).toEqual([
+      { name: 'notes.txt', size: 5, content_type: 'text/plain', folder_id: null },
+    ])
     // The intent token goes to the gateway, not the user's access token.
     expect(sent).toEqual({ auth: 'Bearer upload-intent', body: 'hello' })
     await waitFor(() => expect(listed).toBeGreaterThan(before))

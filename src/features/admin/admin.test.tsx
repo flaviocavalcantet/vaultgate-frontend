@@ -14,6 +14,7 @@ function adminFile(overrides: Partial<AdminFile> = {}): AdminFile {
   return {
     id: FILE_ID,
     name: 'ids.csv',
+    folder_id: null,
     content_type: 'text/csv',
     declared_size: 1024,
     status: 'uploaded',
