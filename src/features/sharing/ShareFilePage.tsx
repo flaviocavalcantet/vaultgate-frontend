@@ -13,9 +13,9 @@ import {
   useCreateShare,
   useRevokeShare,
   useShares,
-  useSharedFile,
+  useSharedTarget,
 } from './useShares'
-import type { ShareCreate, ShareOut } from './types'
+import type { ShareCreate, ShareOut, ShareTarget } from './types'
 
 /** A link's state, sealed: only an active link certifies anything. */
 const SEALS = {
@@ -35,25 +35,40 @@ function optionalCount(value: string): number | null {
 
 /** An owner's sharing of one file: a new link, and the file's links with their state. */
 export function ShareFilePage() {
-  const { t } = useTranslation()
   const { fileId = '' } = useParams()
-  const file = useSharedFile(fileId)
+  return <SharePage target={{ kind: 'file', id: fileId }} />
+}
 
-  if (file.isPending) {
+/**
+ * An owner's sharing of one folder, with everything in it now and later (vaultgate ADR
+ * 0020): a new link, and the folder's links with their state.
+ */
+export function ShareFolderPage() {
+  const { folderId = '' } = useParams()
+  return <SharePage target={{ kind: 'folder', id: folderId }} />
+}
+
+function SharePage({ target }: { target: ShareTarget }) {
+  const { t } = useTranslation()
+  const shared = useSharedTarget(target)
+  const loadingTitle =
+    target.kind === 'folder' ? t('sharing.titleFolderLoading') : t('sharing.titleLoading')
+
+  if (shared.isPending) {
     return (
       <>
-        <PageHeading title={t('sharing.titleLoading')} />
+        <PageHeading title={loadingTitle} />
         <p role="status">{t('sharing.loading')}</p>
       </>
     )
   }
-  if (file.isError) {
-    const reason = reasonOf(file.error) === 'notFound' ? 'notFound' : 'unknown'
+  if (shared.isError) {
+    const reason = reasonOf(shared.error) === 'notFound' ? 'notFound' : 'unknown'
     return (
       <>
-        <PageHeading title={t('sharing.titleLoading')} />
+        <PageHeading title={loadingTitle} />
         <p role="alert" className="mb-4">
-          {t(`sharing.failed.${reason}`)}
+          {t(`sharing.failed.${reason}${target.kind === 'folder' ? 'Folder' : ''}`)}
         </p>
         <Link to="/files" className="underline">
           {t('sharing.back')}
@@ -61,29 +76,43 @@ export function ShareFilePage() {
       </>
     )
   }
+  const { name, shareable, folderId } = shared.data
   return (
     <>
-      <PageHeading title={t('sharing.title', { name: file.data.name })}>
+      <PageHeading
+        title={
+          target.kind === 'folder'
+            ? t('sharing.titleFolder', { name })
+            : t('sharing.title', { name })
+        }
+      >
         {t('sharing.intro')}
       </PageHeading>
+      {target.kind === 'folder' ? (
+        <p className="mb-4 max-w-prose">{t('sharing.folderNote')}</p>
+      ) : null}
       <p className="mb-6">
-        <Link to="/files" className="underline">
-          {t('sharing.back')}
+        <Link to={folderId ? `/files/in/${folderId}` : '/files'} className="underline">
+          {folderId
+            ? t('sharing.backTo', {
+                name: target.kind === 'folder' ? name : t('sharing.itsFolder'),
+              })
+            : t('sharing.back')}
         </Link>
       </p>
-      {file.data.shareable ? (
-        <NewLink fileId={fileId} />
+      {shareable ? (
+        <NewLink target={target} />
       ) : (
         <p className="mb-6 font-medium">{t('sharing.notShareable')}</p>
       )}
-      <Links fileId={fileId} name={file.data.name} />
+      <Links target={target} name={name} />
     </>
   )
 }
 
-function NewLink({ fileId }: { fileId: string }) {
+function NewLink({ target }: { target: ShareTarget }) {
   const { t } = useTranslation()
-  const create = useCreateShare(fileId)
+  const create = useCreateShare(target)
   const [email, setEmail] = useState('')
   const [kind, setKind] = useState<'external' | 'internal'>('external')
   const [days, setDays] = useState('')
@@ -241,10 +270,10 @@ function CreatedLink({ created }: { created: NewShare }) {
   )
 }
 
-function Links({ fileId, name }: { fileId: string; name: string }) {
+function Links({ target, name }: { target: ShareTarget; name: string }) {
   const { t, i18n } = useTranslation()
-  const shares = useShares(fileId)
-  const revoke = useRevokeShare(fileId)
+  const shares = useShares(target)
+  const revoke = useRevokeShare(target)
   const [notice, setNotice] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null)
   const headingId = useId()
 

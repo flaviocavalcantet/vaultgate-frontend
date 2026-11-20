@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 
 import { formatBytes, formatDateTime } from '@/components/format'
 import { PageHeading } from '@/components/PageHeading'
@@ -9,7 +10,7 @@ import { reasonOf } from './failures'
 import type { SharedFile } from './types'
 import { useSharedDownload, useSharedWithMe } from './useSharedWithMe'
 
-/** Files other users shared with the signed-in user's verified address. */
+/** Files and folders other users shared with the signed-in user's verified address. */
 export function SharedWithMePage() {
   const { t, i18n } = useTranslation()
   const shared = useSharedWithMe()
@@ -18,14 +19,17 @@ export function SharedWithMePage() {
 
   const onDownload = (file: SharedFile) => {
     setNotice(null)
-    download.mutate(file.share_id, {
-      onSuccess: () => setNotice({ kind: 'ok', text: t('shared.started', { name: file.name }) }),
-      onError: (error) =>
-        setNotice({
-          kind: 'error',
-          text: t(`shared.downloadFailed.${reasonOf(error)}`, { name: file.name }),
-        }),
-    })
+    download.mutate(
+      { shareId: file.share_id },
+      {
+        onSuccess: () => setNotice({ kind: 'ok', text: t('shared.started', { name: file.name }) }),
+        onError: (error) =>
+          setNotice({
+            kind: 'error',
+            text: t(`shared.downloadFailed.${reasonOf(error)}`, { name: file.name }),
+          }),
+      },
+    )
   }
 
   return (
@@ -86,7 +90,11 @@ export function SharedWithMePage() {
                     {file.name}
                   </th>
                   <td className="py-3 pr-4 whitespace-nowrap">
-                    {file.size === null ? '' : formatBytes(file.size, i18n.language)}
+                    {file.kind === 'folder'
+                      ? t('shared.folder')
+                      : file.size === null
+                        ? ''
+                        : formatBytes(file.size, i18n.language)}
                   </td>
                   <td className="py-3 pr-4">{file.shared_by ?? t('shared.unknownSharer')}</td>
                   <td className="py-3 pr-4 whitespace-nowrap">
@@ -94,11 +102,21 @@ export function SharedWithMePage() {
                   </td>
                   <td className="py-3 pr-4">{file.downloads_left}</td>
                   <td className="py-3 text-right">
-                    {file.available ? (
+                    {file.kind === 'folder' ? (
+                      <Link
+                        to={`/shared/${file.share_id}`}
+                        className={secondaryButton}
+                        aria-label={t('shared.openName', { name: file.name })}
+                      >
+                        {t('shared.open')}
+                      </Link>
+                    ) : file.available ? (
                       <button
                         type="button"
                         className={secondaryButton}
-                        disabled={download.isPending && download.variables === file.share_id}
+                        disabled={
+                          download.isPending && download.variables.shareId === file.share_id
+                        }
                         onClick={() => onDownload(file)}
                         aria-label={t('shared.downloadName', { name: file.name })}
                       >

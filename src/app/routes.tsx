@@ -9,8 +9,9 @@ import { FilesPage } from '@/features/files/FilesPage'
 import { HomePage } from '@/features/home/HomePage'
 import { ACCESS_PATH } from '@/features/sharing/link'
 import { ShareAccessPage } from '@/features/sharing/ShareAccessPage'
+import { SharedFolderPage } from '@/features/sharing/SharedFolderPage'
 import { SharedWithMePage } from '@/features/sharing/SharedWithMePage'
-import { ShareFilePage } from '@/features/sharing/ShareFilePage'
+import { ShareFilePage, ShareFolderPage } from '@/features/sharing/ShareFilePage'
 
 import { ErrorPage } from './ErrorPage'
 import { NotFoundPage } from './NotFoundPage'
@@ -29,8 +30,10 @@ export const routes: RouteObject[] = [
           { index: true, element: <HomePage /> },
           { path: 'files', element: <FilesPage /> },
           { path: 'files/in/:folderId', element: <FilesPage /> },
+          { path: 'files/in/:folderId/sharing', element: <ShareFolderPage /> },
           { path: 'files/:fileId/sharing', element: <ShareFilePage /> },
           { path: 'shared', element: <SharedWithMePage /> },
+          { path: 'shared/:shareId', element: <SharedFolderPage /> },
           {
             // For administrators (is_admin on /me), loaded only when opened.
             path: 'admin',
