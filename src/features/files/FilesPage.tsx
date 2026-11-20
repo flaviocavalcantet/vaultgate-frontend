@@ -132,6 +132,12 @@ function FolderView({ folderId }: { folderId: string | undefined }) {
   const total = files.data?.total ?? 0
   const from = total === 0 ? 0 : page * PAGE_SIZE + 1
   const to = Math.min((page + 1) * PAGE_SIZE, total)
+  // A page left past the end (its last file deleted or moved away) steps back to the
+  // last page that has files: state adjusted while rendering, as React advises.
+  const lastPage = Math.max(0, Math.ceil(total / PAGE_SIZE) - 1)
+  if (files.data !== undefined && files.data.items.length === 0 && page > lastPage) {
+    setPage(lastPage)
+  }
   // Folders come first, on the first page of files.
   const folders = page === 0 ? (subfolders.data?.items ?? []) : []
 
@@ -155,7 +161,7 @@ function FolderView({ folderId }: { folderId: string | undefined }) {
 
   // The list shows once both halves are in, so folders don't appear above files late.
   const ready = files.data !== undefined && subfolders.data !== undefined
-  const empty = ready && files.data.items.length === 0 && subfolders.data.items.length === 0
+  const empty = ready && files.data.total === 0 && subfolders.data.items.length === 0
 
   return (
     <>

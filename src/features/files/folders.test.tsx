@@ -145,9 +145,17 @@ class FakeVault {
         return new HttpResponse(null, { status: 204 })
       }),
       http.get(api('/files'), ({ request }) => {
-        const folder = new URL(request.url).searchParams.get('folder_id')
-        const items = this.files.filter((f) => f.folder_id === folder)
-        return HttpResponse.json({ items, total: items.length, limit: 20, offset: 0 })
+        const url = new URL(request.url)
+        const folder = url.searchParams.get('folder_id')
+        const limit = Number(url.searchParams.get('limit'))
+        const offset = Number(url.searchParams.get('offset'))
+        const all = this.files.filter((f) => f.folder_id === folder)
+        return HttpResponse.json({
+          items: all.slice(offset, offset + limit),
+          total: all.length,
+          limit,
+          offset,
+        })
       }),
       http.patch(api('/files/:id'), async ({ request, params }) => {
         await record(request)
@@ -387,6 +395,19 @@ describe('folders', () => {
       expect(within(screen.getByRole('table')).queryByRole('row', { name: /Work/ })).toBeNull(),
     )
     expect(await row('kept.txt')).toBeVisible()
+  })
+
+  it('steps back a page when the last file on the last page goes', async () => {
+    const vault = new FakeVault()
+    for (let n = 0; n < 21; n += 1) vault.file(`file-${String(n).padStart(2, '0')}.txt`)
+    const user = await open(vault)
+    await user.click(await screen.findByRole('button', { name: 'Next page' }))
+    expect(await screen.findByText('Showing 21–21 of 21')).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Delete file-20.txt' }))
+    const panel = screen.getByRole('region', { name: 'Delete file-20.txt' })
+    await user.click(within(panel).getByRole('button', { name: 'Delete file-20.txt' }))
+    expect(await screen.findByText('Showing 1–20 of 20')).toBeVisible()
+    expect(screen.queryByText(/is empty/)).toBeNull()
   })
 
   it('uploads into the folder it is in', async () => {
