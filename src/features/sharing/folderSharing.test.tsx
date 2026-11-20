@@ -181,6 +181,8 @@ describe('a folder shared with me', () => {
     await user.click(await screen.findByRole('button', { name: 'Open folder Q3' }))
     const crumbs = screen.getByRole('navigation', { name: 'Shared folder path' })
     expect(await within(crumbs).findByText('Q3')).toHaveAttribute('aria-current', 'page')
+    // Focus follows to the folder opened, not lost with the button pressed.
+    expect(within(crumbs).getByText('Q3')).toHaveFocus()
 
     await user.click(screen.getByRole('button', { name: 'Download b.txt' }))
     expect(await screen.findByText('Your download of b.txt has started.')).toBeVisible()

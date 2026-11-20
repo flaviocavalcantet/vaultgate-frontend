@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
 
 import { useApi } from '@/api/useApi'
 import { submitDownload } from '@/components/download'
@@ -58,6 +58,8 @@ export function useAccessContents(token: string, grant: string, folderId: string
   const api = useApi()
   return useQuery({
     queryKey: ['share-access', token, grant, 'contents', folderId ?? null],
+    // The folder shown stays until the next one is in (and focus with it).
+    placeholderData: keepPreviousData,
     retry: false,
     queryFn: async ({ signal }): Promise<SharedContents> => {
       const { data, response } = await api.POST('/shares/access/contents', {

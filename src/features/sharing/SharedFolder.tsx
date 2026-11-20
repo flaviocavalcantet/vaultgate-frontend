@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { formatBytes } from '@/components/format'
@@ -31,6 +32,17 @@ export function SharedFolder({
   const open = (id: string) => onOpen(id === root ? undefined : id)
   const nothing = contents.folders.length === 0 && contents.files.length === 0
 
+  // Moving to another folder replaces the buttons that were pressed: focus goes to the
+  // new folder's name in the path, so a keyboard or screen reader carries on from there.
+  // Not on first showing, which mustn't take focus from the page.
+  const here = useRef<HTMLSpanElement>(null)
+  const shown = useRef(contents.folder.id)
+  useEffect(() => {
+    if (shown.current === contents.folder.id) return
+    shown.current = contents.folder.id
+    here.current?.focus()
+  }, [contents.folder.id])
+
   return (
     <div>
       <nav aria-label={t('sharedFolder.path')} className="mb-3 text-sm">
@@ -39,7 +51,7 @@ export function SharedFolder({
             <li key={step.id} className="flex items-center gap-x-1">
               {index > 0 ? <span aria-hidden="true">/</span> : null}
               {index === contents.path.length - 1 ? (
-                <span aria-current="page" className="font-medium text-ink">
+                <span ref={here} tabIndex={-1} aria-current="page" className="font-medium text-ink">
                   {step.name}
                 </span>
               ) : (

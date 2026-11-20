@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { useApi } from '@/api/useApi'
 import { submitDownload } from '@/components/download'
@@ -26,6 +26,8 @@ export function useSharedContents(shareId: string, folderId: string | undefined)
   const api = useApi()
   return useQuery({
     queryKey: [...sharedKey, shareId, 'contents', folderId ?? null],
+    // The folder shown stays until the next one is in (and focus with it).
+    placeholderData: keepPreviousData,
     queryFn: async ({ signal }): Promise<SharedContents> => {
       const { data, response } = await api.GET('/shared-with-me/{share_id}/contents', {
         params: {
