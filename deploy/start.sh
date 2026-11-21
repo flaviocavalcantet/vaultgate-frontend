@@ -112,9 +112,13 @@ while kill -0 "$nginx_pid" 2>/dev/null; do
   wait $! || true
   now=$(fingerprint)
   if [ "$now" != "$seen" ]; then
-    # A renewal can land as two writes: only a pair nginx accepts is loaded.
+    # A renewal can land as two writes: only a pair nginx accepts is loaded, and a pair
+    # it refuses is tried again on the next check (said once per pair, not every check).
     if nginx -t -q 2>/dev/null; then
       nginx -s reload && seen=$now && echo "vaultgate-frontend: reloaded the renewed certificate"
+    elif [ "$now" != "${refused:-}" ]; then
+      refused=$now
+      echo "vaultgate-frontend: the certificate or key changed, but nginx refuses the pair; trying again" >&2
     fi
   fi
 done

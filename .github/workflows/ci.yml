@@ -100,8 +100,14 @@ jobs:
           served() { echo | openssl s_client -connect 127.0.0.1:8443 2>/dev/null | grep -o 'CN *= *frontend-[0-9]' | head -1; }
           served | grep -q 1
           cp cert2.pem tls.crt && cp key2.pem tls.key
-          for i in $(seq 1 10); do served | grep -q 2 && break; sleep 1; done
-          served | grep -q 2
+          # Reloaded within about a second (checked every second); 30 s of slack for a
+          # busy runner. Failing, it says what is served and what the server logged.
+          for i in $(seq 1 30); do served | grep -q 2 && break; sleep 1; done
+          served | grep -q 2 || {
+            echo "still served: $(served)" >&2
+            docker logs frontend-tls 2>&1 | grep -v '" [0-9][0-9][0-9] ' | tail -20 >&2
+            exit 1
+          }
           cd -
           # An unsafe setting stops the start.
           ! docker run --rm --read-only --tmpfs /tmp -e VAULTGATE_API_URL='https://a.test/"; x' \
