@@ -3,8 +3,9 @@ name: Release
 # A release is a vX.Y.Z tag on a commit of main whose CI run passed. Nothing is
 # rebuilt: the image CI published for that commit (ghcr.io/<owner>/vaultgate-frontend:
 # <commit>) gets the version as a second tag, and the GitHub Release is made, or updated,
-# from the notes reviewed with the change (docs/releases/vX.Y.Z.md). VaultGate's
-# releases name the frontend release they pair with.
+# from the notes reviewed with the change (docs/releases/vX.Y.Z.md), with an SBOM of
+# the image (SPDX JSON, by Trivy) attached. VaultGate's releases name the frontend
+# release they pair with.
 #
 # The tag can be pushed with git, or created by publishing a release on GitHub (whose
 # text this then replaces with the notes). Run by hand with a tag, it does the same for
@@ -83,6 +84,21 @@ jobs:
           [[ $built == "$released" ]] || { echo "$IMAGE:$TAG is not $IMAGE:$COMMIT" >&2; exit 1; }
           echo "ok  $IMAGE:$TAG = $COMMIT ($released)"
 
+      # What is in the released image, package by package, from the very image the
+      # version names (by digest). Signed in as the job, so it works whether or not the
+      # package is public; the token goes in by name, never on a command line.
+      - name: SBOM of the image
+        env:
+          TRIVY_USERNAME: ${{ github.actor }}
+          TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/assets"
+          digest=$(docker buildx imagetools inspect "$IMAGE:$TAG" --format '{{json .Manifest.Digest}}' | tr -d '"')
+          docker run --rm -e TRIVY_USERNAME -e TRIVY_PASSWORD -v "$RUNNER_TEMP/assets:/out" \
+            aquasec/trivy:0.76.2 image --quiet \
+            --format spdx-json --output "/out/vaultgate-frontend-$TAG.spdx.json" "$IMAGE@$digest"
+          ls -l "$RUNNER_TEMP/assets"
+
       # Made from the notes, or, for a release already published on GitHub, given them.
       - name: Publish the release
         env:
@@ -94,3 +110,5 @@ jobs:
             gh release create "$TAG" --verify-tag --title "vaultgate-frontend $TAG" \
               --notes-file "docs/releases/$TAG.md"
           fi
+          # Replaced when the release is done again (a run by hand).
+          gh release upload "$TAG" "$RUNNER_TEMP"/assets/* --clobber

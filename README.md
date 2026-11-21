@@ -108,7 +108,8 @@ release, a new tag on `main`). Either way the Release workflow runs: it rebuilds
 gives the image CI published for that commit the version as a second tag (the same
 digest), and makes the GitHub Release from the notes, or gives them to the one published
 on GitHub. Run by hand (Actions, Release, Run workflow) with a tag, it does the same for
-that tag again, to finish or repair a release. Each release names the VaultGate release
+that tag again, to finish or repair a release. Each release carries an SBOM of its
+image (SPDX JSON, by Trivy). Each release names the VaultGate release
 it pairs with.
 
 ## Checks
