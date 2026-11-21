@@ -2,16 +2,29 @@ name: Release
 
 # A release is a vX.Y.Z tag on a commit of main whose CI run passed. Nothing is
 # rebuilt: the image CI published for that commit (ghcr.io/<owner>/vaultgate-frontend:
-# <commit>) gets the version as a second tag, and the GitHub Release is made from the
-# notes reviewed with the change (docs/releases/vX.Y.Z.md). VaultGate's releases name
-# the frontend release they pair with.
+# <commit>) gets the version as a second tag, and the GitHub Release is made, or updated,
+# from the notes reviewed with the change (docs/releases/vX.Y.Z.md). VaultGate's
+# releases name the frontend release they pair with.
+#
+# The tag can be pushed with git, or created by publishing a release on GitHub (whose
+# text this then replaces with the notes). Run by hand with a tag, it does the same for
+# that tag with this workflow as it is now: to finish or repair a release.
 
 on:
   push:
     tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The release's tag (vX.Y.Z), already on GitHub
+        required: true
 
 permissions:
   contents: read
+
+# One run per tag at a time: a release published on GitHub and a run by hand don't race.
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
 
 jobs:
   release:
@@ -21,21 +34,25 @@ jobs:
       packages: write # the version tag on the image
       actions: read # CI's result for the tagged commit
     env:
-      TAG: ${{ github.ref_name }}
+      TAG: ${{ inputs.tag || github.ref_name }}
       IMAGE: ghcr.io/${{ github.repository_owner }}/vaultgate-frontend
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: refs/tags/${{ inputs.tag || github.ref_name }}
           fetch-depth: 0 # to check the tagged commit is on main
 
+      # The tag's commit, not the run's: a run by hand runs on main's.
       - name: The tag is on main, matches package.json, and has its notes
         run: |
-          git merge-base --is-ancestor "$GITHUB_SHA" origin/main \
-            || { echo "$TAG is not on main" >&2; exit 1; }
           [[ $TAG =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]] || { echo "not a vX.Y.Z tag: $TAG" >&2; exit 1; }
+          want=${BASH_REMATCH[1]}
+          commit=$(git rev-parse "refs/tags/$TAG^{commit}")
+          echo "COMMIT=$commit" >> "$GITHUB_ENV"
+          git merge-base --is-ancestor "$commit" origin/main \
+            || { echo "$TAG is not on main" >&2; exit 1; }
           version=$(node -p "require('./package.json').version")
-          [[ $version == "${BASH_REMATCH[1]}" ]] \
-            || { echo "package.json says $version, the tag $TAG" >&2; exit 1; }
+          [[ $version == "$want" ]] || { echo "package.json says $version, the tag $TAG" >&2; exit 1; }
           [[ -s docs/releases/$TAG.md ]] || { echo "no docs/releases/$TAG.md" >&2; exit 1; }
 
       # A published image isn't yet a released one: only a commit whose CI run on main
@@ -44,27 +61,36 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          conclusions=$(gh run list --workflow ci.yml --commit "$GITHUB_SHA" --branch main \
+          conclusions=$(gh run list --workflow ci.yml --commit "$COMMIT" --branch main \
             --event push --json conclusion --jq '[.[].conclusion] | join(" ")')
           [[ " $conclusions " == *" success "* ]] \
-            || { echo "no successful CI run on main for $GITHUB_SHA (found: ${conclusions:-none})" >&2; exit 1; }
-          echo "ok  CI passed on $GITHUB_SHA"
+            || { echo "no successful CI run on main for $COMMIT (found: ${conclusions:-none})" >&2; exit 1; }
+          echo "ok  CI passed on $COMMIT"
 
-      # imagetools copies the manifest under the new tag; the digest check proves the
-      # version names the very image the commit tag does. A commit with no published
-      # image (one that never reached main's CI) fails here, before anything is released.
+      # --prefer-index=false copies the image's manifest as it is: by default imagetools
+      # wraps a single image in a new index, under another digest. The digest check
+      # proves the version names the very image the commit tag does. A commit with no
+      # published image (one that never reached main's CI) fails here, before anything
+      # is released.
       - name: Tag the commit's image with the version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
-          docker buildx imagetools create -t "$IMAGE:$TAG" "$IMAGE:$GITHUB_SHA"
-          commit=$(docker buildx imagetools inspect "$IMAGE:$GITHUB_SHA" --format '{{json .Manifest.Digest}}')
-          version=$(docker buildx imagetools inspect "$IMAGE:$TAG" --format '{{json .Manifest.Digest}}')
-          [[ $commit == "$version" ]] || { echo "$IMAGE:$TAG is not $IMAGE:$GITHUB_SHA" >&2; exit 1; }
-          echo "ok  $IMAGE:$TAG = $GITHUB_SHA ($version)"
+          docker buildx imagetools create --prefer-index=false -t "$IMAGE:$TAG" "$IMAGE:$COMMIT"
+          built=$(docker buildx imagetools inspect "$IMAGE:$COMMIT" --format '{{json .Manifest.Digest}}')
+          released=$(docker buildx imagetools inspect "$IMAGE:$TAG" --format '{{json .Manifest.Digest}}')
+          [[ $built == "$released" ]] || { echo "$IMAGE:$TAG is not $IMAGE:$COMMIT" >&2; exit 1; }
+          echo "ok  $IMAGE:$TAG = $COMMIT ($released)"
 
+      # Made from the notes, or, for a release already published on GitHub, given them.
       - name: Publish the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create "$TAG" --verify-tag --title "vaultgate-frontend $TAG" --notes-file "docs/releases/$TAG.md"
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "vaultgate-frontend $TAG" --notes-file "docs/releases/$TAG.md"
+          else
+            gh release create "$TAG" --verify-tag --title "vaultgate-frontend $TAG" \
+              --notes-file "docs/releases/$TAG.md"
+          fi
